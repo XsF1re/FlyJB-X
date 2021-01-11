@@ -8,7 +8,7 @@
 #import "../Headers/SysHooks.h"
 #import "../Headers/NoSafeMode.h"
 #import "../Headers/MemHooks.h"
-// #import "../Headers/OptimizeHooks.h"
+#import "../Headers/OptimizeHooks.h"
 #import "../Headers/CheckHooks.h"
 #import "../Headers/PatchFinder.h"
 #import <AppSupport/CPDistributedMessagingCenter.h>
@@ -105,10 +105,10 @@
 	%init(TossAppProtection);
 	loadDisableInjector();
 
-	// NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
-	// if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
-	// 	loadOptimizeHooks();
-	// }
+	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
+	if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
+		loadOptimizeHooks();
+	}
 
 	if(![bundleID hasPrefix:@"com.apple"] && prefs && [prefs[@"enabled"] boolValue]) {
 		if(([prefs[bundleID] boolValue])

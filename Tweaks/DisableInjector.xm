@@ -37,10 +37,9 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 //iOS 13 Higher
 - (id)_createProcessWithExecutionContext: (FBProcessExecutionContext*)executionContext {
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
-	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
 	NSString *bundleID = executionContext.identity.embeddedApplicationIdentifier;
-	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [prefs_crashfix[bundleID] boolValue] && ![prefs_disabler[bundleID] boolValue]);
+	BOOL forcenabled = [prefs[@"forcenabled"] boolValue] && [prefs[bundleID] boolValue];
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
@@ -48,8 +47,8 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
-		if ([prefs_disabler[bundleID] boolValue] || bypassConflictApp) {
-					if(isSubstitute && bypassConflictApp) {
+		if ([prefs_disabler[bundleID] boolValue] || forcenabled) {
+					if(isSubstitute && forcenabled) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -57,7 +56,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 					}
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
-					if(bypassConflictApp)
+					if(forcenabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];
@@ -70,9 +69,8 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 //iOS 12 Lower
 -(id)createApplicationProcessForBundleID: (NSString *)bundleID withExecutionContext: (FBProcessExecutionContext*)executionContext {
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
-	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
-	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [prefs_crashfix[bundleID] boolValue] && ![prefs_disabler[bundleID] boolValue]);
+	BOOL forcenabled = [prefs[@"forcenabled"] boolValue] && [prefs[bundleID] boolValue];
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
@@ -80,8 +78,8 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
-		if ([prefs_disabler[bundleID] boolValue] || bypassConflictApp) {
-					if(isSubstitute && bypassConflictApp) {
+		if ([prefs_disabler[bundleID] boolValue] || forcenabled) {
+					if(isSubstitute && forcenabled) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -89,7 +87,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 					}
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
-					if(bypassConflictApp)
+					if(forcenabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];

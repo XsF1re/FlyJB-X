@@ -15,7 +15,7 @@
 NSMutableDictionary *prefs_FlyJB;
 NSMutableDictionary *prefs_Cr4shF1x;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.0.6";
+static NSString *vers = @"1.0.7";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -80,7 +80,7 @@ static const NSBundle *tweakBundle;
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ACTIVATION") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 			[specifier.properties setValue:@"0" forKey:@"footerAlignment"];
-			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다." forKey:@"footerText"];
+			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다.\n\n강제 로드 기능은 우회 리스트가 적용된 앱을 실행 시 환경 변수를 수정하여 모든 트윅 로드를 차단하고, FlyJB X 트윅만 로드되도록 만듭니다. 이 옵션을 적용하려면 리스프링이 필요합니다." forKey:@"footerText"];
 			specifier;
 		})];
 
@@ -93,6 +93,18 @@ static const NSBundle *tweakBundle;
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ENABLE_DOBBY") target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
 			[specifier.properties setValue:@"enableDobby" forKey:@"displayIdentifier"];
+			specifier;
+		})];
+
+		[specifiers addObject:({
+			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"강제 로드" target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
+			[specifier.properties setValue:@"forcenabled" forKey:@"displayIdentifier"];
+			specifier;
+		})];
+
+		[specifiers addObject:({
+			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"리스프링" target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+			specifier->action = @selector(respring:);
 			specifier;
 		})];
 

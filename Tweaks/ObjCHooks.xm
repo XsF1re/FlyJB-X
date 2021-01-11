@@ -14,6 +14,13 @@ static NSError *_error_file_not_found = nil;
 // %end
 
 %hook UIApplication
+-(BOOL)openURL:(NSURL *)url {
+	if([[FJPattern sharedInstance] isURLRestricted:url]) {
+		return NO;
+	}
+	return %orig;
+}
+
 - (BOOL)canOpenURL: (NSURL *)url {
 	if([[FJPattern sharedInstance] isURLRestricted:url]) {
 		return NO;
