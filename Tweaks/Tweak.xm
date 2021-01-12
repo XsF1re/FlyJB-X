@@ -11,6 +11,7 @@
 #import "../Headers/OptimizeHooks.h"
 #import "../Headers/CheckHooks.h"
 #import "../Headers/PatchFinder.h"
+#import "../ImportHooker/ImportHooker.h"
 #import <AppSupport/CPDistributedMessagingCenter.h>
 #import <spawn.h>
 #include <dlfcn.h>
@@ -115,6 +116,8 @@
 		   || ([bundleID hasPrefix:@"com.ibk.ios.ionebank"] && [prefs[@"com.ibk.ios.ionebank"] boolValue])
 		   || ([bundleID hasPrefix:@"com.lguplus.mobile.cs"] && [prefs[@"com.lguplus.mobile.cs"] boolValue]))
 		{
+			openDobby();
+
 			if([bundleID isEqualToString:@"com.kbstar.kbbank"])
 				loadNoSafeMode();
 

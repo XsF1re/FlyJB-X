@@ -15,7 +15,7 @@
 NSMutableDictionary *prefs_FlyJB;
 NSMutableDictionary *prefs_Cr4shF1x;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.0.7";
+static NSString *vers = @"1.0.8";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -80,7 +80,7 @@ static const NSBundle *tweakBundle;
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ACTIVATION") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 			[specifier.properties setValue:@"0" forKey:@"footerAlignment"];
-			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다.\n\n강제 로드 기능은 우회 리스트가 적용된 앱을 실행 시 환경 변수를 수정하여 모든 트윅 로드를 차단하고, FlyJB X 트윅만 로드되도록 만듭니다. 이 옵션을 적용하려면 리스프링이 필요합니다." forKey:@"footerText"];
+			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다.\n\n강제 로드 기능은 우회 리스트가 적용된 앱을 실행 시 환경 변수를 수정하여 모든 트윅 로드를 차단하고, FlyJB X 트윅만 로드되도록 만듭니다.\n\nSubstitute는 현재 최신 버전에서 트윅 로드가 되지 않는 문제점이 있기에 FlyJB X 지원이 중단될 수도 있습니다. Chimera/Odyssey/Odysseyra1n의 libhooker로 전환하는 것을 고려하세요." forKey:@"footerText"];
 			specifier;
 		})];
 
@@ -107,6 +107,8 @@ static const NSBundle *tweakBundle;
 			specifier->action = @selector(respring:);
 			specifier;
 		})];
+
+
 
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
 			[specifiers addObject:({
@@ -495,18 +497,6 @@ static const NSBundle *tweakBundle;
 }
 -(NSNumber *)getSwitch:(PSSpecifier *)specifier {
 	return [prefs_FlyJB [[specifier propertyForKey:@"displayIdentifier"]] isEqual:@1] ? @1 : @0;
-}
-
--(void)injectFlyJBX {
-	pid_t pid;
-	const char* args[] = {"/usr/bin/inject", "/usr/lib/FlyJBX.dylib", NULL};
-	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args, NULL);
-	const char* args2[] = {"/usr/bin/inject", "/usr/lib/FJDobby", NULL};
-	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args2, NULL);
-	const char* args3[] = {"/usr/bin/inject", "/usr/lib/libsubstrate.dylib", NULL};
-	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args3, NULL);
-	const char* args4[] = {"/usr/bin/inject", "/usr/lib/libsubstitute.dylib", NULL};
-	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args4, NULL);
 }
 
 -(void)openWebsite:(PSSpecifier *)specifier {

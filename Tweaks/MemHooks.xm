@@ -49,78 +49,78 @@ void nothing(void)
 }
 
 void startHookTarget_lxShield(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match - 0x1C, RET, sizeof(RET));
-#endif
+
 }
 
 void startHookTarget_AhnLab(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match, RET, sizeof(RET));
-#endif
+
 }
 
 void startHookTarget_AhnLab2(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match - 0x10, RET, sizeof(RET));
-#endif
+
 }
 
 void startHookTarget_AhnLab3(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match - 0x8, RET, sizeof(RET));
-#endif
+
 }
 
 void startHookTarget_AhnLab4(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match - 0x10, RET, sizeof(RET));
-#endif
+
 }
 
 void startHookTarget_AppSolid(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match, RET, sizeof(RET));
-#endif
+
 }
 
 void startPatchTarget_KJBank(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match - 0x4, KJP, sizeof(KJP));
-#endif
+
 }
 
 void startPatchTarget_KJBank2(uint8_t* match) {
-#if defined __arm64__
+
 	uint8_t B10[] = {
 		0x04, 0x00, 0x00, 0x14  //B #0x10
 	};
 
 	hook_memory(match + 0x14, B10, sizeof(B10));
-#endif
+
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match, SYSAccessBlock, sizeof(SYSAccessBlock));
-#endif
+
 }
 
 void startPatchTarget_SYSAccessNOP(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match, SYSAccessNOPBlock, sizeof(SYSAccessNOPBlock));
-#endif
+
 }
 
 void startPatchTarget_SYSOpen(uint8_t* match) {
-#if defined __arm64__
+
 	hook_memory(match, SYSOpenBlock, sizeof(SYSOpenBlock));
-#endif
+
 }
 
 // ====== PATCH CODE ====== //
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-#if defined __arm64__
+
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
 	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
@@ -137,28 +137,28 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	else {
 		NSLog(@"[FlyJB] Detected Unknown SVC #0x80 number: %d", syscall_num);
 	}
-#endif
+
 }
 
 void startHookTarget_SVC80(uint8_t* match) {
-#if defined __arm64__
+
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80_handler);
 	dobby_disable_near_branch_trampoline();
-#endif
+
 }
 
 void loadSVC80MemHooks() {
-#if defined __arm64__
+
 	const uint8_t target[] = {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80);
-#endif
+
 }
 
 void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-#if defined __arm64__
+
 	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
@@ -175,19 +175,19 @@ void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 		NSLog(@"[FlyJB] Detected SVC #0x80 - SYS_Access path = %s", path);
 	}
 
-#endif
+
 }
 
 void startHookTarget_SVC80Access(uint8_t* match) {
-#if defined __arm64__
+
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80Access_handler);
 	dobby_disable_near_branch_trampoline();
-#endif
+
 }
 
 void loadSVC80AccessMemHooks() {
-#if defined __arm64__
+
 	const uint8_t target[] = {
 		0x30, 0x04, 0x80, 0xD2, //MOV X16, #21
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
@@ -202,14 +202,14 @@ void loadSVC80AccessMemHooks() {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
 	scan_executable_memory(target2, sizeof(target2), &startHookTarget_SVC80Access);
-#endif
+
 }
 
 
 
 // ====== PATCH FROM FJMemory ====== //
 void loadFJMemoryHooks() {
-#if defined __arm64__
+
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
@@ -223,14 +223,14 @@ void loadFJMemoryHooks() {
 			writeData(strtoull(dict_addr.UTF8String, NULL, 0), strtoull(dict_instr.UTF8String, NULL, 0));
 		}
 	}
-#endif
+
 }
 
 // ====== 하나멤버스 무결성 복구 ====== //
 %group FJMemoryIntegrityRecoverHMS
 %hook NSFileManager
 - (BOOL)fileExistsAtPath: (NSString *)path {
-#if defined __arm64__
+
 	if([path hasSuffix:@"/com.vungle/userInfo"]) {
 		NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 		NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
@@ -245,7 +245,7 @@ void loadFJMemoryHooks() {
 			}
 		}
 	}
-#endif
+
 	return %orig;
 }
 %end
@@ -255,7 +255,7 @@ void loadFJMemoryHooks() {
 %group FJMemoryIntegrityRecoverLMP
 %hook XASAskJobs
 +(int)updateCheck {
-#if defined __arm64__
+
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
@@ -268,7 +268,7 @@ void loadFJMemoryHooks() {
 			writeData(strtoull(dict_addr.UTF8String, NULL, 0), strtoull(dict_instrOrig.UTF8String, NULL, 0));
 		}
 	}
-#endif
+
 	return 121;
 }
 %end

@@ -204,13 +204,7 @@ static int hook_syscall(int num, ...) {
 	va_list args;
 	va_start(args, num);
 
-#if defined __arm64__ || defined __arm64e__
 	memcpy(stack, args, 64);
-#endif
-
-#if defined __armv7__ || defined __armv7s__
-	memcpy(stack, args, 32);
-#endif
 
 	if(num == SYS_access || num == SYS_open || num == SYS_stat || num == SYS_lstat || num == SYS_stat64 || num == SYS_chdir || num == SYS_chroot) {
 		const char *path = va_arg(args, const char*);
