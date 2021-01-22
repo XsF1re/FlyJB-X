@@ -131,24 +131,10 @@
 			if([bundleID isEqualToString:@"com.kakaobank.channel"]) {
 				NSLog(@"[FlyJB] kakaoBankPatch: %d", kakaoBankPatch());
 			}
-//AhnLab Mobile Security - NH올원페이, 하나카드, NH스마트뱅킹, NH농협카드, 하나카드 원큐페이(앱카드), NH스마트알림, NH올원뱅크
-			NSArray *AMSApps = [NSArray arrayWithObjects:
-																@"com.nonghyup.card.NHAllonePay",
-																@"com.hanaskcard.mobileportal",
-																@"com.nonghyup.newsmartbanking",
-																@"com.nonghyup.nhcard",
-																@"com.hanaskcard.paycli",
-																@"com.nonghyup.nhsmartpush",
-																@"com.nonghyup.allonebank",
-																nil
-																];
-
-			for(NSString* app in AMSApps) {
-				if([bundleID isEqualToString:app]) {
-					loadAhnLabMemHooks();
-					break;
-				}
-			}
+//AhnLab Mobile Security - NH올원페이, 하나카드, NH스마트뱅킹, NH농협카드, 하나카드 원큐페이(앱카드), NH스마트알림, NH올원뱅크, NH콕뱅크...
+			Class AhnLabExist = objc_getClass("AMSLContaminationInspector");
+			if(AhnLabExist)
+				loadAhnLabMemHooks();
 
 //락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원, blind...
 			Class LiappExist = objc_getClass("Liapp");
@@ -244,6 +230,10 @@
 				}
 			}
 
+//NSHC - 미니스탁
+			if([bundleID isEqualToString:@"com.truefriend.ministock"])
+				loadMiniStockMemHooks();
+
 //NSHC lxShield - 가디언테일즈
 			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"])
 				loadlxShieldMemHooks();
@@ -281,13 +271,9 @@
 				}
 			}
 
-//Arxan - 스마일페이, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코
+//Arxan - 스마일페이, 페이코
 			NSArray *ArxanApps = [NSArray arrayWithObjects:
 																@"com.mysmilepay.app",
-																@"com.gsretail.ios.thepop",
-																@"com.gsretail.gscvs",
-																@"com.gsretail.supermarket",
-																@"com.bccard.iphoneapp",
 																@"com.nhnent.TOASTPAY",
 																nil
 																];
@@ -311,6 +297,11 @@
 //XignCode - 좀비고
 		if([bundleID isEqualToString:@"net.kernys.aooni"])
 			loadXignCodeHooks();
+
+//nProtect AppGuard - 뱅뱅뱅 상상인디지털뱅크, 애큐온저축은행 모바일뱅킹
+		Class nProtectExist = objc_getClass("AGFramework");
+		if(nProtectExist)
+			loadnProtectMemHooks();
 
 //하나카드, NEW하나은행, Arxan 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:

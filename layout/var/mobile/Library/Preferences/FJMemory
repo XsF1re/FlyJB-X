@@ -1,55 +1,153 @@
 {
-  "com.truefriend.smartnewi": {
-    "1.9.5": {
-      "addr": [
-        "0x1003C4B40",
-        "0x1003C4B40"
+  "it.azzoaglio.mobile": {
+    "1.3.5": {
+      "fwName": [
+        "mobilex"
       ],
-      "instr": [
-        "0x000080D2",
-        "0xC0035FD6"
+      "fwAddr": [
+        "0x5E54C",
+        "0x5E3E8",
+        "0x5E7E4",
+        "0x5E644",
+        "0x5EA48",
       ],
-    },
+    }
   },
-  "com.truefriend.ministock": {
-    "1.0.11": {
-      "addr": [
-        "0x1005DF4AC"
+  "de.dkb.pushtan": {
+    "2.6.0": {
+      "fwName": [
+        "pushtanx"
       ],
-      "instr": [
-        "0x200080D2"
+      "fwAddr": [
+        "0x76174",
+        "0x76394",
+        "0x76120",
+        "0x76044",
+        "0x76000",
       ],
-    },
+    }
   },
-  "com.gsretail.gscvs": {
-    "4.0.8": {
-      "addr": [
-        "0x1002BF304"
+  "uk.co.hsbc.hsbcukmobilebanking": {
+    "2.34.0": {
+      "fwName": [
+        "hsbcukmobilebankingx"
       ],
-      "instr": [
-        "0xC0035FD6"
+      "fwAddr": [
+        "0x60198",
+        "0x5FEFC",
+        "0x5FEB8",
+        "0x5FD7C",
+        "0x6014C",
       ],
-    },
+    }
   },
-  "com.gsretail.supermarket": {
-    "2.0.7": {
-      "addr": [
-        "0x10023FE40"
+  "com.hsbc.us.hsbcus": {
+    "3.4.0": {
+      "fwName": [
+        "hsbcusx"
       ],
-      "instr": [
-        "0xC0035FD6"
+      "fwAddr": [
+        "0x7549C",
+        "0x75830",
+        "0x756EC",
+        "0x758D0",
+        "0x75784",
       ],
-    },
+    }
   },
-  "com.gsretail.ios.thepop": {
-    "1.0.7": {
-      "addr": [
-        "0x100388B18"
+  "sa.alrajhibank.retailapp": {
+    "4.2.08": {
+      "fwName": [
+        "retailappx"
       ],
-      "instr": [
-        "0xC0035FD6"
+      "fwAddr": [
+        "0x75330",
+        "0x75274",
+        "0x753C8",
+        "0x75110",
+        "0x75078",
       ],
-    },
+    }
+  },
+  "sa.com.stcpay": {
+    "1.5.9": {
+      "fwName": [
+        "stcpayx"
+      ],
+      "fwAddr": [
+        "0x550DE4",
+        "0x550E28",
+        "0x550E6C",
+        "0x550EB0",
+        "0x550F9C",
+        "0x550FE8",
+        "0x551034",
+      ],
+    }
+  },
+  "de.fiducia.iphone.securego.vr": {
+    "20.23.0": {
+      "fwName": [
+        "vrx"
+      ],
+      "fwAddr": [
+        "0x17514",
+        "0x17560",
+        "0x175AC",
+        "0x173E4",
+        "0x1735C",
+        "0x173A0",
+        "0x17428",
+      ],
+    }
+  },
+  "de.fiducia.iphone.vrbanking": {
+    "20.23.0": {
+      "fwName": [
+        "vrbankingx"
+      ],
+      "fwAddr": [
+        "0x17514",
+        "0x17560",
+        "0x175AC",
+        "0x173E4",
+        "0x1735C",
+        "0x173A0",
+        "0x17428",
+      ],
+    }
+  },
+  "de.starfinanz.Finanzstatus": {
+    "5.9.1": {
+      "fwName": [
+        "Finanzstatusx"
+      ],
+      "fwAddr": [
+        "0x41C9F4",
+        "0x41CA40",
+        "0x41CA8C",
+        "0x41C8C8",
+        "0x41C840",
+        "0x41C884",
+        "0x41C908",
+      ],
+    }
+  },
+  "de.starfinanz.pushTanApp": {
+    "3.2.1": {
+      "fwName": [
+        "pushTanAppx"
+      ],
+      "fwAddr": [
+        "0x18E3B4",
+        "0x18E400",
+        "0x18E44C",
+        "0x18E284",
+        "0x18E1FC",
+        "0x18E240",
+        "0x18E2C8",
+      ],
+    }
   },
   "com.nhnent.TOASTPAY": {
     "3.15.1": {
@@ -140,5 +238,5 @@
       ],
     },
   },
-  "version": "2021.01.11"
+  "version": "2021.01.22"
 }

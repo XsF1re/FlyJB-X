@@ -19,7 +19,9 @@ void startPatchTarget_SYSAccessNOP(uint8_t* match);
 void startPatchTarget_SYSOpen(uint8_t* match);
 void startPatchTarget_KJBank(uint8_t* match);
 void startPatchTarget_KJBank2(uint8_t* match);
-
+void startPatchTarget_nProtect(uint8_t* match);
+void startPatchTarget_nProtect2(uint8_t* match);
+void startPatchTarget_MiniStock(uint8_t* match);
 
 @interface MemHooks: NSObject
 - (NSDictionary *)getFJMemory;

@@ -6,6 +6,7 @@
 #import "../Headers/FJPattern.h"
 #include <sys/syscall.h>
 #include <dlfcn.h>
+#include <mach-o/dyld.h>
 
 @implementation MemHooks
 - (NSDictionary *)getFJMemory {
@@ -16,6 +17,11 @@
 @end
 
 uint8_t RET[] = {
+	0xC0, 0x03, 0x5F, 0xD6  //RET
+};
+
+uint8_t RET1[] = {
+	0x20, 0x00, 0x80, 0xD2,	//MOV X0, #1
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
 
@@ -46,6 +52,18 @@ void (*orig_subroutine)(void);
 void nothing(void)
 {
 	;
+}
+
+int (*orig_int)(void);
+
+int ret_0(void)
+{
+	return 0;
+}
+
+int ret_1(void)
+{
+	return 1;
 }
 
 void startHookTarget_lxShield(uint8_t* match) {
@@ -85,19 +103,27 @@ void startHookTarget_AppSolid(uint8_t* match) {
 }
 
 void startPatchTarget_KJBank(uint8_t* match) {
-
 	hook_memory(match - 0x4, KJP, sizeof(KJP));
-
 }
 
 void startPatchTarget_KJBank2(uint8_t* match) {
-
 	uint8_t B10[] = {
 		0x04, 0x00, 0x00, 0x14  //B #0x10
 	};
 
 	hook_memory(match + 0x14, B10, sizeof(B10));
+}
 
+void startPatchTarget_nProtect(uint8_t* match) {
+	hook_memory(match, RET, sizeof(RET));
+}
+
+void startPatchTarget_nProtect2(uint8_t* match) {
+	hook_memory(match - 0x10, RET, sizeof(RET));
+}
+
+void startPatchTarget_MiniStock(uint8_t* match) {
+	hook_memory(match - 0x1C, RET1, sizeof(RET1));
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {
@@ -122,7 +148,7 @@ void startPatchTarget_SYSOpen(uint8_t* match) {
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
-	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
+	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64 || syscall_num == SYS_setxattr || syscall_num == SYS_stat64 || syscall_num == SYS_rename) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 		NSString* path2 = [NSString stringWithUTF8String:path];
 		if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
@@ -132,6 +158,15 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 		else {
 			NSLog(@"[FlyJB] Detected SVC #0x80 - num: %d, path: %s", syscall_num, path);
 		}
+	}
+
+	else if(syscall_num == SYS_syscall) {
+		int x0 = (int)(uint64_t)reg_ctx->general.regs.x0;
+		NSLog(@"[FlyJB] Detected syscall of SVC #0x80 number: %d", x0);
+	}
+
+	else if(syscall_num == SYS_exit) {
+		NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
 	}
 
 	else {
@@ -149,12 +184,11 @@ void startHookTarget_SVC80(uint8_t* match) {
 }
 
 void loadSVC80MemHooks() {
-
 	const uint8_t target[] = {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
-	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80);
 
+	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80);
 }
 
 void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
@@ -204,15 +238,65 @@ void loadSVC80AccessMemHooks() {
 	scan_executable_memory(target2, sizeof(target2), &startHookTarget_SVC80Access);
 
 }
-
-
+//
+// void blrx8_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+// 	uint64_t x8 = (uint64_t)(reg_ctx->general.regs.x8);
+// 	NSLog(@"[FlyJB] BLR X8: %llX", x8 - _dyld_get_image_vmaddr_slide(3));
+// 	NSLog(@"[FlyJB] BLR X8 callstack: %@", [NSThread callStackSymbols]);
+// }
+//
+// void blrx9_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+// 	uint64_t x9 = (uint64_t)(reg_ctx->general.regs.x9);
+// 	NSLog(@"[FlyJB] BLR X9: %llX", x9 - _dyld_get_image_vmaddr_slide(3));
+// }
+//
+// void blrx10_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+// 	uint64_t x10 = (uint64_t)(reg_ctx->general.regs.x10);
+// 	NSLog(@"[FlyJB] BLR X10: %llX", x10 - _dyld_get_image_vmaddr_slide(3));
+// }
 
 // ====== PATCH FROM FJMemory ====== //
 void loadFJMemoryHooks() {
 
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
-	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+	// loadSVC80MemHooks();
+	// NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+	NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+	bundlePath = [bundlePath stringByAppendingString:@"/Info.plist"];
+	NSMutableDictionary *infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:bundlePath];
+	NSString *appVersion = infoDict[@"CFBundleShortVersionString"];
 	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
+
+	//Framework
+	NSInteger fwAddrCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"fwAddr"] count];
+	NSString* fwName = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"fwName"] objectAtIndex:0];
+
+	if(fwAddrCount) {
+		int imageIndex = 0;
+		uint32_t count = _dyld_image_count();
+		for(uint32_t i = 0; i < count; i++)
+		{
+			const char *dyld = _dyld_get_image_name(i);
+			NSString *nsdyld = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dyld length:strlen(dyld)];
+			if([nsdyld hasSuffix:fwName]) {
+				NSLog(@"[FlyJB] Found fwName: %@, imageIndex: %d", nsdyld, i);
+				imageIndex = i;
+				break;
+			}
+		}
+
+		for(int j=0; j < fwAddrCount; j++)
+		{
+			NSString* nsfwaddr = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"fwAddr"] objectAtIndex:j];
+			NSLog(@"[FlyJB] nsfwaddr: %@", nsfwaddr);
+			unsigned long fwAddr = _dyld_get_image_vmaddr_slide(imageIndex) + strtoull(nsfwaddr.UTF8String, NULL, 0);
+			MSHookFunction((void *)fwAddr, (void *)ret_0, (void **)&orig_int);
+		}
+	}
+
+
+
+	//App
 	NSInteger dictAddrCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"addr"] count];
 	if(dictAddrCount) {
 		for(int i=0; i < dictAddrCount; i++)

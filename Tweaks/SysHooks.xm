@@ -19,7 +19,7 @@
 #define kCFCoreFoundationVersionNumber_iOS_14_0 1740.00
 
 %group SysHooks
-
+//
 // %hookf(void, exit, int code) {
 // 	NSLog(@"[FlyJB] exit called");
 // 	NSLog(@"[FlyJB] exit call stack:\n%@", [NSThread callStackSymbols]);
@@ -147,7 +147,8 @@ static int hook_open(const char *path, int oflag, ...) {
 }
 
 %hookf(int, lstat, const char *pathname, struct stat *statbuf) {
-	if(pathname) {
+	int ret = %orig;
+	if(ret == 0) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
@@ -161,25 +162,21 @@ static int hook_open(const char *path, int oflag, ...) {
 			   || [path isEqualToString:@"/usr/include"]
 			   || [path isEqualToString:@"/Library/Ringtones"]
 			   || [path isEqualToString:@"/Library/Wallpaper"]) {
-				int ret = %orig;
-
-				if(ret == 0 && (statbuf->st_mode & S_IFLNK) == S_IFLNK) {
+				if((statbuf->st_mode & S_IFLNK) == S_IFLNK) {
 					statbuf->st_mode &= ~S_IFLNK;
 					return ret;
 				}
 			}
 
 			if([path isEqualToString:@"/bin"]) {
-				int ret = %orig;
-
-				if(ret == 0 && statbuf->st_size > 128) {
+				if(statbuf->st_size > 128) {
 					statbuf->st_size = 128;
 					return ret;
 				}
 			}
 		}
 	}
-	return %orig;
+	return ret;
 }
 
 %hookf(int, stat, const char *pathname, struct stat *statbuf) {

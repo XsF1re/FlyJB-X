@@ -4,7 +4,6 @@
 
 @interface FJPattern: NSObject
 + (instancetype)sharedInstance;
-- (BOOL)isCrashAppWithSubstitutor: (NSString *)bundleID;
 - (BOOL)isAhnLabPathRestricted: (NSString *)path;
 - (BOOL)isPathRestricted: (NSString *)path;
 - (BOOL)isPathRestrictedForSymlink: (NSString *)path;

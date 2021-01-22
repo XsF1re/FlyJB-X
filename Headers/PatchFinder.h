@@ -10,3 +10,5 @@ void loadAhnLabMemHooks();
 void loadAppSolidMemHooks();
 void loadSVC80MemPatch();
 void loadKJBankMemHooks();
+void loadnProtectMemHooks();
+void loadMiniStockMemHooks();

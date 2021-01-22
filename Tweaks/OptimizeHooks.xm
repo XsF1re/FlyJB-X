@@ -3,51 +3,68 @@
 #import "../Headers/OptimizeHooks.h"
 #include <dlfcn.h>
 
+#ifndef kCFCoreFoundationVersionNumber_iOS_14_1
+#define kCFCoreFoundationVersionNumber_iOS_14_1 1751.108
+#endif
+
 %group OptimizeHooks
-%hookf(void *, dlopen, const char *path, int mode) {
-	if (path == NULL) return %orig(path, mode);
+void* (*dlopen_internal)(const char*, int, void*);
+void* $dlopen_internal(const char *path, int mode, void* lr)
+{
+	@autoreleasepool
 	{
-		NSString *nspath = @(path);
-		if(([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
+		if(path != NULL)
+		{
+			NSString* nspath = @(path);
+
+			if((([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"] || [nspath hasPrefix:@"/Library/TweakInject"])
 		   && [nspath hasSuffix:@".dylib"])
 			 && [nspath rangeOfString:@"AppList"].location == NSNotFound
 		 	 && [nspath rangeOfString:@"PreferenceLoader"].location == NSNotFound
-		   && [nspath rangeOfString:@"RocketBootstrap"].location == NSNotFound)
-		{
-			return NULL;
+		   && [nspath rangeOfString:@"RocketBootstrap"].location == NSNotFound) {
+				 // NSLog(@"[FlyJB] blocked dylib: %s", path);
+				 return NULL;
+			 }
 		}
-		return %orig(path, mode);
 	}
+	// NSLog(@"[FlyJB] dylib: %s", path);
+	return dlopen_internal(path, mode, lr);
 }
-%end
 
-%group OptimizeHooksForSubstrate
-%hookf(int, access, const char *path, int mode) {
-	if (path) {
-		NSString *nspath = [NSString stringWithUTF8String:path];
-		if(([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
-		   && [nspath hasSuffix:@".plist"])
-		 	 && [nspath rangeOfString:@"AppList"].location == NSNotFound
+void* (*dlopen_regular)(const char*, int);
+void* $dlopen_regular(const char *path, int mode)
+{
+	@autoreleasepool
+	{
+		if(path != NULL)
+		{
+			NSString* nspath = @(path);
+
+			if((([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"] || [nspath hasPrefix:@"/Library/TweakInject"])
+		   && [nspath hasSuffix:@".dylib"])
+			 && [nspath rangeOfString:@"AppList"].location == NSNotFound
 		 	 && [nspath rangeOfString:@"PreferenceLoader"].location == NSNotFound
 		   && [nspath rangeOfString:@"RocketBootstrap"].location == NSNotFound) {
-			// NSLog(@"[FlyJB] access blocked: %@", nspath);
-			errno = EACCES;
-			return -1;
+				 // NSLog(@"[FlyJB] blocked dylib: %s", path);
+				 return NULL;
+			 }
 		}
 	}
-	return %orig(path, mode);
-}
-%end
+	// NSLog(@"[FlyJB] dylib: %s", path);
+	return dlopen_regular(path, mode);
+}%end
 
 void loadOptimizeHooks() {
+//Thanks to opa334 (Choicy Project)
+	%init(OptimizeHooks);
+	MSImageRef libdyldImage = MSGetImageByName("/usr/lib/system/libdyld.dylib");
 
-	BOOL isLibHooker = [[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"];
-	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"]);
-
-	if(isLibHooker || isSubstitute) {
-		%init(OptimizeHooks);
+	if(kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_14_1)
+	{
+		MSHookFunction(MSFindSymbol(libdyldImage, "__ZL15dlopen_internalPKciPv"), (void*)$dlopen_internal, (void**)&dlopen_internal);
 	}
-	else {
-		%init(OptimizeHooksForSubstrate);
+	else
+	{
+		MSHookFunction(MSFindSymbol(libdyldImage, "_dlopen"), (void*)$dlopen_regular, (void**)&dlopen_regular);
 	}
 }

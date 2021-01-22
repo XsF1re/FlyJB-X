@@ -335,3 +335,26 @@ void loadKJBankMemHooks() {
 	scan_executable_memory(target2, sizeof(target2), &startPatchTarget_KJBank2);
 
 }
+
+void loadnProtectMemHooks() {
+	const uint8_t target[] = {
+		0x30, 0x00, 0x80, 0xD2,
+		0x01, 0x10, 0x00, 0xD4
+	};
+	scan_executable_memory(target, sizeof(target), &startPatchTarget_nProtect);
+
+	const uint8_t target2[] = {
+		0xE0, 0x0F, 0x1F, 0x32,
+		0x61, 0x04, 0x80, 0x52
+	};
+	scan_executable_memory(target2, sizeof(target2), &startPatchTarget_nProtect2);
+}
+
+void loadMiniStockMemHooks() {
+	const uint8_t target[] = {
+		0xFD, 0xC3, 0x06, 0x91,
+		0x18, 0x02, 0x80, 0xD2,
+		0x18, 0x00, 0xFA, 0xF2
+	};
+	scan_executable_memory(target, sizeof(target), &startPatchTarget_MiniStock);
+}
