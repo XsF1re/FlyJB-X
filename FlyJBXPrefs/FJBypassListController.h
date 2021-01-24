@@ -2,6 +2,6 @@
 #import <Preferences/PSSpecifier.h>
 #import <Preferences/PSListItemsController.h>
 
-@interface FJAppListController : PSListController
+@interface FJBypassListController : PSListController
 
 @end

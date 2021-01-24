@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "../Headers/DisableInjector.h"
+#import "../Headers/OptimizeDisableInjector.h"
 #include <sys/syscall.h>
 #include <spawn.h>
 #import "../Headers/FJPattern.h"
@@ -17,7 +17,7 @@
 BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
 const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
-%group DisableInjector
+%group OptimizeDisableInjector
 //iOS 11 ~ 13
 %hook _SBApplicationLaunchAlertInfo
  -(NSString *)bundleID {
@@ -37,9 +37,10 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 //iOS 13 Higher
 - (id)_createProcessWithExecutionContext: (FBProcessExecutionContext*)executionContext {
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
+  NSMutableDictionary *prefs_optimize = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
 	NSString *bundleID = executionContext.identity.embeddedApplicationIdentifier;
-	BOOL forcenabled = [prefs[@"forcenabled"] boolValue] && [prefs[bundleID] boolValue];
+	BOOL optimizeEnabled = [prefs[bundleID] boolValue] && [prefs_optimize [bundleID] boolValue];
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
@@ -47,8 +48,8 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
-		if ([prefs_disabler[bundleID] boolValue] || forcenabled) {
-					if(isSubstitute && forcenabled) {
+		if ([prefs_disabler[bundleID] boolValue] || optimizeEnabled) {
+					if(isSubstitute && optimizeEnabled) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -56,7 +57,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 					}
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
-					if(forcenabled)
+					if(optimizeEnabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];
@@ -69,8 +70,9 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 //iOS 12 Lower
 -(id)createApplicationProcessForBundleID: (NSString *)bundleID withExecutionContext: (FBProcessExecutionContext*)executionContext {
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
+  NSMutableDictionary *prefs_optimize = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
-	BOOL forcenabled = [prefs[@"forcenabled"] boolValue] && [prefs[bundleID] boolValue];
+	BOOL optimizeEnabled = [prefs[bundleID] boolValue] && [prefs_optimize [bundleID] boolValue];
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
@@ -78,8 +80,8 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
-		if ([prefs_disabler[bundleID] boolValue] || forcenabled) {
-					if(isSubstitute && forcenabled) {
+		if ([prefs_disabler[bundleID] boolValue] || optimizeEnabled) {
+					if(isSubstitute && optimizeEnabled) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -87,7 +89,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 					}
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
-					if(forcenabled)
+					if(optimizeEnabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];
@@ -99,6 +101,6 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 %end
 %end
 
-void loadDisableInjector() {
-	%init(DisableInjector);
+void loadOptimizeDisableInjector() {
+	%init(OptimizeDisableInjector);
 }

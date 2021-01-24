@@ -1,7 +1,7 @@
 #import <spawn.h>
 #include "FJRootListController.h"
-#include "FJAppListController.h"
-#include "FJCr4shF1xListController.h"
+#include "FJBypassListController.h"
+#include "FJOptimizeListController.h"
 #include "FJDisablerListController.h"
 
 #define RESET_PREFS 100
@@ -9,13 +9,13 @@
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define PREFERENCE_FlyJB @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"
-#define PREFERENCE_Cr4shF1x @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"
+#define PREFERENCE_Optimize @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"
 #define PREFERENCE_Disabler @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"
 
 NSMutableDictionary *prefs_FlyJB;
-NSMutableDictionary *prefs_Cr4shF1x;
+NSMutableDictionary *prefs_Optimize;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.0.10";
+static NSString *vers = @"1.0.12";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -80,7 +80,7 @@ static const NSBundle *tweakBundle;
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ACTIVATION") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 			[specifier.properties setValue:@"0" forKey:@"footerAlignment"];
-			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다.\n\n강제 로드 기능은 우회 리스트가 적용된 앱을 실행 시 환경 변수를 수정하여 모든 트윅 로드를 차단하고, FlyJB X 트윅만 로드되도록 만듭니다.\n\nSubstitute는 현재 최신 버전에서 트윅 로드가 되지 않는 문제점이 있기에 FlyJB X 지원이 중단될 수도 있습니다. Chimera/Odyssey/Odysseyra1n의 libhooker로 전환하는 것을 고려하세요." forKey:@"footerText"];
+			[specifier.properties setValue:LOCALIZED(@"FlyJB_DOBBY_DESC") forKey:@"footerText"];
 			specifier;
 		})];
 
@@ -96,23 +96,9 @@ static const NSBundle *tweakBundle;
 			specifier;
 		})];
 
-		[specifiers addObject:({
-			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"강제 로드" target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
-			[specifier.properties setValue:@"forcenabled" forKey:@"displayIdentifier"];
-			specifier;
-		})];
-
-		[specifiers addObject:({
-			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"리스프링" target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
-			specifier->action = @selector(respring:);
-			specifier;
-		})];
-
-
-
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
 			[specifiers addObject:({
-				PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"업데이트" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
+				PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_UPDATE") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 				if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
 				        NSString *FJDataPath = @"/var/mobile/Library/Preferences/FJMemory";
 				        NSData *FJMemory = [NSData dataWithContentsOfFile:FJDataPath options:0 error:nil];
@@ -139,7 +125,7 @@ static const NSBundle *tweakBundle;
 			[specifier.properties setValue:LOCALIZED(@"FlyJB_BYPASS_DESC") forKey:@"footerText"];
 			specifier;
 		})];
-		[specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_BYPASSLIST") target:nil set:nil get:nil detail:[FJAppListController class] cell:PSLinkListCell edit:nil]];
+		[specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_BYPASSLIST") target:nil set:nil get:nil detail:[FJBypassListController class] cell:PSLinkListCell edit:nil]];
 
 		[specifiers addObject:({
 			PSSpecifier *specifier = [[PSSpecifier alloc] init];
@@ -147,13 +133,8 @@ static const NSBundle *tweakBundle;
 			[specifier.properties setValue:LOCALIZED(@"FlyJB_OPTIMIZE_DESC") forKey:@"footerText"];
 			specifier;
 		})];
-		// [specifiers addObject:({
-		// 		PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"FlyJB X 인젝트하기" target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
-		// 		[specifier setIdentifier:@"ShowSourceCode"];
-		// 		specifier->action = @selector(injectFlyJBX);
-		// 		specifier;
-		// })];
-		[specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_OPTIMIZELIST") target:nil set:nil get:nil detail:[FJCr4shF1xListController class] cell:PSLinkListCell edit:nil]];
+
+		[specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_OPTIMIZELIST") target:nil set:nil get:nil detail:[FJOptimizeListController class] cell:PSLinkListCell edit:nil]];
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
 			[specifiers addObject:({
 				PSSpecifier *specifier = [[PSSpecifier alloc] init];
@@ -338,7 +319,7 @@ static const NSBundle *tweakBundle;
 	                                                       NSString *supportedVersion = @"20201223";
 	                                                       if(![supportedVersion_web isEqualToString:supportedVersion])  {
 	                                                               UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZED(@"FlyJB_UPDATE_FAILED")
-	                                                                                           message:@"현재 버전은 메모리 패치 업데이트 기능을 지원하지 않습니다.\n공중제비 트윅을 최신 버전으로 업데이트해주세요."
+	                                                                                           message:LOCALIZED(@"FlyJB_UPDATE_UNSUPPORTED")
 	                                                                                           preferredStyle:UIAlertControllerStyleAlert];
 	                                                               UIAlertAction *ok = [UIAlertAction actionWithTitle:LOCALIZED(@"FlyJB_OK")
 	                                                                                    style:UIAlertActionStyleDefault
@@ -582,7 +563,7 @@ static const NSBundle *tweakBundle;
 - (void)resetPreferences {
 	[[NSFileManager defaultManager] removeItemAtPath:@"/var/mobile/Library/Preferences/FJMemory" error:NULL];
 	[[NSFileManager defaultManager] removeItemAtPath:PREFERENCE_FlyJB error:NULL];
-	[[NSFileManager defaultManager] removeItemAtPath:PREFERENCE_Cr4shF1x error:NULL];
+	[[NSFileManager defaultManager] removeItemAtPath:PREFERENCE_Optimize error:NULL];
 	[[NSFileManager defaultManager] removeItemAtPath:PREFERENCE_Disabler error:NULL];
 
 	if (SYSTEM_VERSION_LESS_THAN(@"10.0")) {

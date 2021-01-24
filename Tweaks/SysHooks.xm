@@ -498,8 +498,8 @@ static DIR *hook_opendir(const char *pathname) {
 
 void loadSysHooks() {
 	%init(SysHooks);
-	//Substrate crash when hook open on iOS 14... WTF?
-	//Use dobbyhook instead :)
+	// 케이뱅크 crash when hook open on iOS 14 with Substrate... WTF?
+	// Use dobbyhook instead :)
 	// DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "open"), (DBICallTy)open_handler);
 	DobbyHook((void*)open, (void*)hook_open, (void**)&orig_open);
 }

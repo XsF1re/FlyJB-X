@@ -1,24 +1,24 @@
 #!/bin/bash
-echo "[FlyJB X]오래된 파일 삭제 중..."
-if [[ -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_Enabler.plist" ]]; then
-	rm -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_Enabler.plist" &> /dev/null
+echo "[FlyJB X] Removing old files..."
+if [[ -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist" ]]; then
+	rm -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist" &> /dev/null
 else
-	echo "[FlyJB X] kr.xsf1re.flyjb_Enabler.plist 파일을 찾을 수 없습니다."
+	echo "[FlyJB X] Couldn't find kr.xsf1re.flyjb_crashfix.plist"
 fi
 if [[ -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" ]]; then
 	rm -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" &> /dev/null
 else
-	echo "[FlyJB X]이름이 변경된 FlyJBX.dylib 파일을 찾을 수 없습니다."
+	echo "[FlyJB X] Couldn't find renamed FlyJBX.dylib"
 fi
 if [[ -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" ]]; then
 	rm -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" &> /dev/null
 else
-	echo "[FlyJB X]이름이 변경된 FlyJBX.plist 파일을 찾을 수 없습니다."
+	echo "[FlyJB X] Couldn't find renamed FlyJBX.plist"
 fi
 
 
-echo "[FlyJB X]다른 트윅보다 먼저 로드될 수 있도록 이름을 변경하는 중..."
+echo "[FlyJB X] Renaming to load before other tweaks..."
 mv "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" &> /dev/null
 mv "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" &> /dev/null
 
-echo "[FlyJB X]설치 완료...! FlyJB X 를 설치해주셔서 감사합니다. 즐거운 탈옥되세요~"
+echo "[FlyJB X] Done."

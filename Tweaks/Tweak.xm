@@ -4,11 +4,10 @@
 #import "../Headers/FJPattern.h"
 #import "../Headers/LibraryHooks.h"
 #import "../Headers/ObjCHooks.h"
-#import "../Headers/DisableInjector.h"
+#import "../Headers/OptimizeDisableInjector.h"
 #import "../Headers/SysHooks.h"
 #import "../Headers/NoSafeMode.h"
 #import "../Headers/MemHooks.h"
-#import "../Headers/OptimizeHooks.h"
 #import "../Headers/CheckHooks.h"
 #import "../Headers/PatchFinder.h"
 #import "../ImportHooker/ImportHooker.h"
@@ -28,31 +27,12 @@
 -(void)applicationDidFinishLaunching: (id)arg1 {
 	%orig;
 	UIAlertController *alertController = [UIAlertController
-	                                      alertControllerWithTitle:@"공중제비"
-	                                      message:@"FJMemory 파일을 불러올 수 없습니다. 트윅을 재설치하십시오."
+	                                      alertControllerWithTitle:@"FlyJB X"
+	                                      message:@"Couldn't find FJMemory. Please reinstall FlyJB X."
 	                                      preferredStyle:UIAlertControllerStyleAlert
 	                                     ];
 
-	[alertController addAction:[UIAlertAction actionWithTitle:@"확인" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-	                                    [((UIApplication*)self).keyWindow.rootViewController dismissViewControllerAnimated:YES completion:NULL];
-				    }]];
-
-	[((UIApplication*)self).keyWindow.rootViewController presentViewController:alertController animated:YES completion:NULL];
-}
-%end
-%end
-
-%group ReachItIntegrityFail
-%hook SpringBoard
--(void)applicationDidFinishLaunching: (id)arg1 {
-	%orig;
-	UIAlertController *alertController = [UIAlertController
-	                                      alertControllerWithTitle:@"공중제비"
-	                                      message:@"현재 설치된 공중제비 트윅은 신뢰되지 않거나 크랙, 또는 불법 소스로부터 설치된 것으로 판단됩니다.\n제거하시고 아래 소스로부터 설치하시기 바랍니다.\nhttps://repo.xsf1re.kr/"
-	                                      preferredStyle:UIAlertControllerStyleAlert
-	                                     ];
-
-	[alertController addAction:[UIAlertAction actionWithTitle:@"에휴" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+	[alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 	                                    [((UIApplication*)self).keyWindow.rootViewController dismissViewControllerAnimated:YES completion:NULL];
 				    }]];
 
@@ -93,23 +73,13 @@
 		loadNoSafeMode();
 	}
 
-	if (![[NSFileManager defaultManager] fileExistsAtPath:@"/var/lib/dpkg/info/kr.xsf1re.flyjbx.list"]) {
-		%init(ReachItIntegrityFail);
-		return;
-	}
-
 	if(![[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
 		%init(NoFile);
 		return;
 	}
 
 	%init(TossAppProtection);
-	loadDisableInjector();
-
-	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
-	if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
-		loadOptimizeHooks();
-	}
+	loadOptimizeDisableInjector();
 
 	if(![bundleID hasPrefix:@"com.apple"] && prefs && [prefs[@"enabled"] boolValue]) {
 		if(([prefs[bundleID] boolValue])
@@ -141,31 +111,11 @@
 			if(LiappExist)
 				loadSysHooksForLiApp();
 
-//스틸리언
-			Class stealienExist = objc_getClass("StockNewsdmManager");
-			Class stealienExist2 = objc_getClass("FactoryConfigurati");
-			if((stealienExist || stealienExist2) && ![bundleID isEqualToString:@"com.vivarepublica.cash"])
-				loadStealienObjCHooks();
+			Class stealienExist = objc_getClass("Diresu");
+			Class stealienExist2 = objc_getClass("Kartzela");
 
-//스틸리언2 - 케이뱅크, 보험파트너, 토스, 사이다뱅크(SBI저축은행), 티머니페이, 티머니 비즈페이, 애큐온저축은행
-			NSArray *StealienApps = [NSArray arrayWithObjects:
-																@"com.kbankwith.smartbank",
-																@"im.toss.app.insurp",
-																@"com.vivarepublica.cash",
-																@"com.sbi.saidabank",
-																@"com.tmoney.tmpay",
-																@"com.kscc.t-gift",
-																@"com.kismobile.pay",
-																@"co.kr.acuonsavingsbank.acuonsb",
-																nil
-																];
-
-			for(NSString* app in StealienApps) {
-				if([bundleID isEqualToString:app]) {
-					loadSysHooks4();
-					break;
-				}
-			}
+			if(stealienExist && stealienExist2)
+				loadSysHooks4();
 
 //배달요기요앱은 한번 탈옥감지하면 설정파일에 colorChecker key에 TRUE 값이 기록됨.
 			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
@@ -189,9 +139,8 @@
 			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
 				loadKJBankMemHooks();
 
-//따로 제작? 불명 - KB손해보험; AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드)
+//따로 제작? 불명 - AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드)
 			NSArray *UnkApps = [NSArray arrayWithObjects:
-																@"com.kbinsure.kbinsureapp",
 																@"com.epost.psf.sd",
 																@"org.kftc.fido.lnk.lnkApp",
 																@"com.wooriwm.txsmart",
@@ -303,10 +252,18 @@
 		if(nProtectExist)
 			loadnProtectMemHooks();
 
-//하나카드, NEW하나은행, Arxan 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 롯데카드 일부 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:
 															 @"com.hanaskcard.mobileportal",
 															 @"com.kebhana.hanapush",
+															 @"com.gsretail.ios.thepop",
+															 @"com.gsretail.gscvs",
+															 @"com.gsretail.supermarket",
+															 @"com.bccard.iphoneapp",
+															 @"com.nhnent.TOASTPAY",
+															 @"com.samsungCard.samsungCard",
+															 @"com.shinhancard.SmartShinhan2",
+															 @"com.lottecard.appcard",
 															 nil
 															 ];
 

@@ -1,4 +1,4 @@
-#include "FJAppListController.h"
+#include "FJBypassListController.h"
 #import <AppList/AppList.h>
 #define PREFERENCE_FlyJB @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"
 NSMutableDictionary *prefs_FlyJB;
@@ -10,7 +10,7 @@ static NSInteger DictionaryTextComparator(id a, id b, void *context) {
 	return [[(__bridge NSDictionary *)context objectForKey:a] localizedCaseInsensitiveCompare:[(__bridge NSDictionary *)context objectForKey:b]];
 }
 
-@implementation FJAppListController
+@implementation FJBypassListController
 
 - (NSArray *)specifiers {
 	if (!_specifiers) {

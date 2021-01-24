@@ -1,7 +1,7 @@
-#include "FJCr4shF1xListController.h"
+#include "FJOptimizeListController.h"
 #import <AppList/AppList.h>
-#define PREFERENCE_Cr4shF1x @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"
-NSMutableDictionary *prefs_Cr4shF1x;
+#define PREFERENCE_Optimize @"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"
+NSMutableDictionary *prefs_Optimize;
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -10,7 +10,7 @@ static NSInteger DictionaryTextComparator(id a, id b, void *context) {
 	return [[(__bridge NSDictionary *)context objectForKey:a] localizedCaseInsensitiveCompare:[(__bridge NSDictionary *)context objectForKey:b]];
 }
 
-@implementation FJCr4shF1xListController
+@implementation FJOptimizeListController
 - (NSArray *)specifiers {
 	if (!_specifiers) {
 		tweakBundle = [NSBundle bundleWithPath:@"/Library/PreferenceBundles/FlyJBXPrefs.bundle"];
@@ -21,13 +21,16 @@ static NSInteger DictionaryTextComparator(id a, id b, void *context) {
 		NSDictionary *applications = [applicationList applicationsFilteredUsingPredicate:[NSPredicate predicateWithFormat:@"isSystemApplication = FALSE"]];
 		NSMutableArray *displayIdentifiers = [[applications allKeys] mutableCopy];
 		[displayIdentifiers sortUsingFunction:DictionaryTextComparator context:(__bridge void *)applications];
+		NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 		for (NSString *displayIdentifier in displayIdentifiers)
 		{
-			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:applications[displayIdentifier] target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
-			[specifier.properties setValue:displayIdentifier forKey:@"displayIdentifier"];
-			UIImage *icon = [applicationList iconOfSize:ALApplicationIconSizeSmall forDisplayIdentifier:displayIdentifier];
-			if (icon) [specifier setProperty:icon forKey:@"iconImage"];
-			[specifiers addObject:specifier];
+			if([prefs [displayIdentifier] boolValue]) {
+				PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:applications[displayIdentifier] target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
+				[specifier.properties setValue:displayIdentifier forKey:@"displayIdentifier"];
+				UIImage *icon = [applicationList iconOfSize:ALApplicationIconSizeSmall forDisplayIdentifier:displayIdentifier];
+				if (icon) [specifier setProperty:icon forKey:@"iconImage"];
+				[specifiers addObject:specifier];
+			}
 		}
 
 		_specifiers = [specifiers copy];
@@ -37,15 +40,15 @@ static NSInteger DictionaryTextComparator(id a, id b, void *context) {
 }
 
 -(void)setSwitch:(NSNumber *)value forSpecifier:(PSSpecifier *)specifier {
-	prefs_Cr4shF1x[[specifier propertyForKey:@"displayIdentifier"]] = [NSNumber numberWithBool:[value boolValue]];
-	[[prefs_Cr4shF1x copy] writeToFile:PREFERENCE_Cr4shF1x atomically:FALSE];
+	prefs_Optimize[[specifier propertyForKey:@"displayIdentifier"]] = [NSNumber numberWithBool:[value boolValue]];
+	[[prefs_Optimize copy] writeToFile:PREFERENCE_Optimize atomically:FALSE];
 }
 
 -(NSNumber *)getSwitch:(PSSpecifier *)specifier {
-	return [prefs_Cr4shF1x[[specifier propertyForKey:@"displayIdentifier"]] isEqual:@1] ? @1 : @0;
+	return [prefs_Optimize[[specifier propertyForKey:@"displayIdentifier"]] isEqual:@1] ? @1 : @0;
 }
 -(void)getPreference {
-	if(![[NSFileManager defaultManager] fileExistsAtPath:PREFERENCE_Cr4shF1x]) prefs_Cr4shF1x = [[NSMutableDictionary alloc] init];
-	else prefs_Cr4shF1x = [[NSMutableDictionary alloc] initWithContentsOfFile:PREFERENCE_Cr4shF1x];
+	if(![[NSFileManager defaultManager] fileExistsAtPath:PREFERENCE_Optimize]) prefs_Optimize = [[NSMutableDictionary alloc] init];
+	else prefs_Optimize = [[NSMutableDictionary alloc] initWithContentsOfFile:PREFERENCE_Optimize];
 }
 @end

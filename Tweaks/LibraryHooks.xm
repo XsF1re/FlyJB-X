@@ -7,6 +7,13 @@
 @end
 
 %group LibraryHooks
+//불명 - KB손해보험
+%hook JBHelper
+-(BOOL)getJBCResult {
+	return false;
+}
+%end
+
 //Arxan - THE POP
 %hook thepop_Utils
 +(void)showConfirmWithTitle:(id)arg1 message:(id)arg2 willDissmiss:(bool)arg3 rightButtnTitle:(id)arg4 onRightButtonClick:(id)arg5 {
@@ -122,14 +129,6 @@
 }
 //NEW하나은행
 -(void)setGCheckGuard: (id)arg1 {
-	;
-}
-%end
-
-
-//SFAntiPiracy 광주은행
-%hook RootViewController
--(void)showJailNotice: (id)arg1 {
 	;
 }
 %end

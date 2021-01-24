@@ -6,8 +6,8 @@
 	<string>공중제비 활성화</string>
 	<key>FlyJB_APPSETTINGS</key>
 	<string>공중제비 앱 설정</string>
-	<key>FlyJB_BAR_ENABLE</key>
-	<string>FlyJB 바 보이기</string>
+	<key>FlyJB_DOBBY_DESC</key>
+	<string>Dobby를 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다.</string>
 	<key>FlyJB_BYPASSLIST</key>
 	<string>우회 리스트</string>
 	<key>FlyJB_BYPASS_DESC</key>
@@ -29,11 +29,11 @@
 	<key>FlyJB_DISABLERLIST</key>
 	<string>모든 트윅 비활성화</string>
 	<key>FlyJB_DISABLER_DESC</key>
-	<string>특정 앱에 대한 모든 트윅 적용이 해제됩니다.</string>
+	<string>FlyJB 트윅을 포함한 모든 트윅 적용이 해제됩니다.</string>
 	<key>FlyJB_ENABLE</key>
 	<string>사용</string>
     <key>FlyJB_ENABLE_DOBBY</key>
-    <string>DobbyHook 사용</string>
+    <string>Dobby 사용</string>
 	<key>FlyJB_ETCOPTIONS</key>
 	<string>기타 옵션</string>
 	<key>FlyJB_FEEDBACK</key>
@@ -70,9 +70,9 @@ v%@ © FlyJB X %@</string>
 	<key>FlyJB_OPTIMIZELIST</key>
 	<string>최적화 리스트</string>
 	<key>FlyJB_OPTIMIZE_DESC</key>
-	<string>앱과 트윅 사이에 충돌하는 현상을 해결하며 앱 성능이 최적화될 수 있습니다.</string>
+	<string>환경 변수를 수정하여 FlyJB 트윅을 제외한 모든 트윅 로드가 차단됩니다. 앱이 튕기거나 특별한 문제가 없다면 활성화하지 마세요.</string>
 	<key>FlyJB_PATCHDATA_DESC</key>
-	<string>일부 앱들은 메모리 패치가 필요하므로 앱버전을 확인해야 합니다.</string>
+	<string>일부 앱들은 메모리 패치가 필요하므로 앱버전을 확인하셔야 합니다.</string>
 	<key>FlyJB_RESET</key>
 	<string>초기화</string>
 	<key>FlyJB_RESETPREFS</key>
@@ -90,7 +90,7 @@ v%@ © FlyJB X %@</string>
 	<key>FlyJB_SYSTEMAPPS</key>
 	<string>시스템 앱</string>
 	<key>FlyJB_THANKS4TEST</key>
-	<string>베타테스트 해주셔서 감사합니다!</string>
+	<string>사용해주셔서 감사합니다!</string>
 	<key>FlyJB_THIRDPARTYAPPS</key>
 	<string>서드파티 앱</string>
 	<key>FlyJB_TITLE</key>
@@ -109,6 +109,9 @@ v%@ © FlyJB X %@</string>
 	<string>업데이트 정보</string>
 	<key>FlyJB_UPDATE_CHECK</key>
 	<string>업데이트 확인 중...</string>
+    <key>FlyJB_UPDATE_UNSUPPORTED</key>
+    <string>현재 버전은 메모리 패치 업데이트 기능을 지원하지 않습니다.
+공중제비 트윅을 최신 버전으로 업데이트해주세요.</string>
 	<key>FlyJB_UPDATE_FAILED</key>
 	<string>업데이트 실패...</string>
 	<key>FlyJB_UPDATE_FAILED_DATA</key>

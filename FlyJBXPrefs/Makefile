@@ -6,7 +6,7 @@ TARGET := iphone:clang:13.1:7.1
 include $(THEOS)/makefiles/common.mk
 
 BUNDLE_NAME = FlyJBXPrefs
-$(BUNDLE_NAME)_FILES = FJRootListController.m FJAppListController.m FJCr4shF1xListController.m FJDisablerListController.m
+$(BUNDLE_NAME)_FILES = FJRootListController.m FJBypassListController.m FJOptimizeListController.m FJDisablerListController.m
 $(BUNDLE_NAME)_INSTALL_PATH = /Library/PreferenceBundles
 $(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences

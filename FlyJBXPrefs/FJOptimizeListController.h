@@ -2,6 +2,6 @@
 #import <Preferences/PSSpecifier.h>
 #import <Preferences/PSListItemsController.h>
 
-@interface FJCr4shF1xListController : PSListController
+@interface FJOptimizeListController : PSListController
 
 @end
