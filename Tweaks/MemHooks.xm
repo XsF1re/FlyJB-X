@@ -196,9 +196,6 @@ void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
-	//int num_syscall = (int)(uint64_t)reg_ctx->general.regs.x16;
-	//NSLog(@"[FlyJB] Detected SVC #0x80 number = %d", num_syscall);
-
 //Arxan 솔루션에서는 /sbin/mount 파일이 존재해야 우회됨.
 	if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
 		//Start Bypass
@@ -208,8 +205,6 @@ void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	else {
 		NSLog(@"[FlyJB] Detected SVC #0x80 - SYS_Access path = %s", path);
 	}
-
-
 }
 
 void startHookTarget_SVC80Access(uint8_t* match) {
@@ -237,6 +232,36 @@ void loadSVC80AccessMemHooks() {
 	};
 	scan_executable_memory(target2, sizeof(target2), &startHookTarget_SVC80Access);
 
+}
+
+void SVC80Open_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+
+	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
+	NSString* path2 = [NSString stringWithUTF8String:path];
+
+	if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
+		//Start Bypass
+		NSLog(@"[FlyJB] Bypassed SVC #0x80 - SYS_Open path = %s", path);
+		*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";
+	}
+	else {
+		NSLog(@"[FlyJB] Detected SVC #0x80 - SYS_Open path = %s", path);
+	}
+}
+
+void startHookTarget_SVC80Open(uint8_t* match) {
+	dobby_enable_near_branch_trampoline();
+	DobbyInstrument((void *)(match), (DBICallTy)SVC80Open_handler);
+	dobby_disable_near_branch_trampoline();
+}
+
+void loadSVC80OpenMemHooks() {
+
+	const uint8_t target[] = {
+		0xB0, 0x00, 0x80, 0xD2, //MOV X16, #5
+		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80Open);
 }
 //
 // void blrx8_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {

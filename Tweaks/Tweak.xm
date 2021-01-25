@@ -165,8 +165,6 @@
 																//@"com.lotte.mybee.lpay",
 																@"com.lottecard.LotteMembers",
 																@"kr.co.nmcs.lpay",
-																@"com.tmoney.tmpay",
-																@"com.kscc.t-gift",
 																nil
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
@@ -175,6 +173,26 @@
 			for(NSString* app in NSHCApps) {
 				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"])) {
 					loadSVC80MemPatch();
+					break;
+				}
+			}
+
+			NSArray *NSHCTApps = [NSArray arrayWithObjects:
+																@"com.tmoney.tmpay",
+																@"com.kscc.t-gift",
+																@"kr.co.ondataxi.passenger",
+																@"kr.co.tmoney.tia",
+																nil
+																];
+
+			for(NSString* app in NSHCTApps) {
+				if([bundleID isEqualToString:app]) {
+					if(isSubstitute || isLibHooker)
+						loadSVC80MemHooks();
+					else {
+						loadSVC80AccessMemHooks();
+						loadSVC80OpenMemHooks();
+					}
 					break;
 				}
 			}

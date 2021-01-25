@@ -6,6 +6,7 @@ void loadFJMemoryRunTimeHooks();
 void loadFJMemoryIntegrityRecover();
 void loadFJMemorySymbolHooks();
 void loadSVC80MemHooks();
+void loadSVC80OpenMemHooks();
 void loadSVC80AccessMemHooks();
 void loadOpendirMemHooks();
 void startHookTarget_lxShield(uint8_t* match);
