@@ -436,6 +436,16 @@
                              @"/etc/rc.d/substitute",
                              @"/Library/LaunchDaemons/com.ex.substituted.plist",
                              @"/usr/include/substitute",
+                             @"/jb/lzma",
+                             @"/jb/offsets.plist",
+                             @"/usr/share/jailbreak/injectme.plist",
+                             @"/etc/apt/undecimus/undecimus.list",
+                             @"/var/lib/dpkg/info/mobilesubstrate.md5sums",
+                             @"/jb/jailbreakd.plist",
+                             @"/jb/amfid_payload.dylib",
+                             @"/jb/libjailbreak.dylib",
+                             @"/private/var/cache/apt/",
+                             @"/private/var/Users/",
                              nil
                             ];
 }
@@ -464,7 +474,7 @@
 			return YES;
 		}
 	}
-	// NSLog(@"[FlyJB] file = %@", path);
+  // NSLog(@"[FlyJB] file = %@", path);
 	return NO;
 }
 

@@ -20,6 +20,7 @@ include $(THEOS_MAKE_PATH)/tweak.mk
 before-package::
 	mkdir -p $(THEOS_STAGING_DIR)/usr/lib/
 	ldid -S -M -Ksigncert.p12 $(THEOS_STAGING_DIR)/usr/lib/FJHooker.dylib
+	chmod 755 $(THEOS_STAGING_DIR)/Applications/FlyJB.app/FlyJB
 
 after-install::
 	install.exec "killall -9 SpringBoard"

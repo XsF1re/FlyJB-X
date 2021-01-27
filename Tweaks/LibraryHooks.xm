@@ -7,6 +7,13 @@
 @end
 
 %group LibraryHooks
+// %hook TAUtil
+// +(id)getCarrierCode {
+// 	return @"1";
+// }
+// %end
+
+
 //불명 - KB손해보험
 %hook JBHelper
 -(BOOL)getJBCResult {

@@ -111,11 +111,13 @@
 			if(LiappExist)
 				loadSysHooksForLiApp();
 
+//스틸리언...
 			Class stealienExist = objc_getClass("Diresu");
 			Class stealienExist2 = objc_getClass("Kartzela");
 
-			if(stealienExist && stealienExist2)
+			if(stealienExist && stealienExist2) {
 				loadSysHooks4();
+			}
 
 //배달요기요앱은 한번 탈옥감지하면 설정파일에 colorChecker key에 TRUE 값이 기록됨.
 			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
@@ -162,30 +164,31 @@
 			}
 
 			NSArray *NSHCApps = [NSArray arrayWithObjects:
-																//@"com.lotte.mybee.lpay",
 																@"com.lottecard.LotteMembers",
 																@"kr.co.nmcs.lpay",
 																nil
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
 
-//블랙리스트: 빗썸
+//NSHC 블랙리스트: 빗썸, 유안타증권
 			for(NSString* app in NSHCApps) {
-				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"])) {
+				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"] && ![bundleID isEqualToString:@"com.yuanta.tradarm"])) {
 					loadSVC80MemPatch();
 					break;
 				}
 			}
 
-			NSArray *NSHCTApps = [NSArray arrayWithObjects:
+//SVC탐지 + 스틸리언: 티머니 관련 4종, 유안타증권
+			NSArray *SVCWithStealienApps = [NSArray arrayWithObjects:
 																@"com.tmoney.tmpay",
 																@"com.kscc.t-gift",
 																@"kr.co.ondataxi.passenger",
 																@"kr.co.tmoney.tia",
+																@"com.yuanta.tradarm",
 																nil
 																];
 
-			for(NSString* app in NSHCTApps) {
+			for(NSString* app in SVCWithStealienApps) {
 				if([bundleID isEqualToString:app]) {
 					if(isSubstitute || isLibHooker)
 						loadSVC80MemHooks();
@@ -205,8 +208,8 @@
 			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"])
 				loadlxShieldMemHooks();
 
-//NSHC lxShield v2 - 현대카드, 달빛조각사
-			if([bundleID isEqualToString:@"com.hyundaicard.hcappcard"]  || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
+//NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사
+			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks2();
 
 //NSHC lxShield v3 - LPay
@@ -224,19 +227,11 @@
 
 			for(NSString* app in mVaccineApps) {
 				if([bundleID isEqualToString:app]) {
-					if(DobbyHook) {
-						if(isSubstitute || isLibHooker)
-							loadSVC80MemHooks();
-						else
-							loadSVC80AccessMemHooks();
-					}
-					else {
 						//Disabled DobbyHook...
 						loadSVC80MemPatch();
 					}
 					break;
 				}
-			}
 
 //Arxan - 스마일페이, 페이코
 			NSArray *ArxanApps = [NSArray arrayWithObjects:
@@ -298,8 +293,7 @@
 
 			if(enableSysHook) {
 				loadSysHooks2();
-				if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
-					loadSysHooks3();
+				loadSysHooks3();
 			}
 
 			loadDlsymSysHooks();
