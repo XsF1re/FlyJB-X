@@ -155,6 +155,7 @@
                              @"/Library/MobileSubstrate/DynamicLibraries",
                              @"/Library/MobileSubstrate/DynamicLibraries/0Shadow.dylib",
                              @"/Library/MobileSubstrate/DynamicLibraries/ FlyJB.dylib",
+                             @"/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib",
                              @"/Library/MobileSubstrate/DynamicLibraries/!ABypass.dylib",
                              @"/Library/MobileSubstrate/DynamicLibraries/",
                              @"/Library/MobileSubstrate/DynamicLibraries/Activator.dylib",

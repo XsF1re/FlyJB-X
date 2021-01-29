@@ -397,7 +397,10 @@ static char* hook_strstr(const char* s1, const char* s2) {
 %end
 
 %group loadSysHooksForLiApp
-%hookf(int, connect, int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
+
+static int (*orig_connect)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+static int hook_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
+
 	NSString *appPath = [[[[NSBundle mainBundle] bundleURL] absoluteString] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
 	const char *LiAppPath = [[appPath stringByAppendingString:@"LIAPP.ini"] cStringUsingEncoding:NSUTF8StringEncoding];
 
@@ -405,15 +408,25 @@ static char* hook_strstr(const char* s1, const char* s2) {
 
 	if(LiApp) {
 		//NSLog(@"[FlyJB] Found LIAPP.ini");
+		struct sockaddr_in *myaddr = (struct sockaddr_in *)serv_addr;
 		char LiAppString[32];
+		BOOL FoundServerIP = false;
 		while (!feof(LiApp)) {
 			fgets(LiAppString, 32, LiApp);
 			if(strstr(LiAppString, "serverip=") != NULL)  {
 				//NSLog(@"[FlyJB] LiAppString = %s", LiAppString);
+				FoundServerIP = true;
 				break;
 			}
 		}
 		fclose(LiApp);
+		if(!FoundServerIP) {
+			if(myaddr->sin_port == 2876) {
+				errno = ETIMEDOUT;
+				return -1;
+			}
+			return orig_connect(sockfd, serv_addr, addrlen);
+		}
 
 		NSString *LiAppIP = [[NSString stringWithUTF8String:LiAppString] stringByReplacingOccurrencesOfString:@"serverip=" withString:@""];
 		LiAppIP = [LiAppIP stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -421,7 +434,6 @@ static char* hook_strstr(const char* s1, const char* s2) {
 
 		struct hostent *host_entry = gethostbyname(LiAppIP2);
 		int ndx = 0;
-		struct sockaddr_in *myaddr = (struct sockaddr_in *)serv_addr;
 		if (host_entry) {
 			for (ndx = 0; NULL != host_entry->h_addr_list[ndx]; ndx++) {
 				//NSLog(@"[FlyJB] LiAppIP: %s, LiAppIP(hex): %x", inet_ntoa(*(struct in_addr*)host_entry->h_addr_list[ndx]), inet_addr(inet_ntoa(*(struct in_addr*)host_entry->h_addr_list[ndx])));
@@ -433,11 +445,10 @@ static char* hook_strstr(const char* s1, const char* s2) {
 				}
 			}
 		}
-		//NSLog(@"[FlyJB] Detected connect ip: %s, ip(hex): %x, port:%d", inet_ntoa(myaddr->sin_addr), myaddr->sin_addr.s_addr, myaddr->sin_port);
+		// NSLog(@"[FlyJB] Detected connect ip: %s, ip(hex): %x, port:%d", inet_ntoa(myaddr->sin_addr), myaddr->sin_addr.s_addr, myaddr->sin_port);
 	}
-	return %orig;
+	return orig_connect(sockfd, serv_addr, addrlen);
 }
-
 
 %hookf(kern_return_t, task_info, task_name_t target_task, task_flavor_t flavor, task_info_t task_info_out, mach_msg_type_number_t *task_info_outCnt) {
 	if (flavor == TASK_DYLD_INFO) {
@@ -446,10 +457,24 @@ static char* hook_strstr(const char* s1, const char* s2) {
 			struct task_dyld_info *task_info = (struct task_dyld_info *) task_info_out;
 			struct dyld_all_image_infos *dyld_info = (struct dyld_all_image_infos *) task_info->all_image_info_addr;
 			dyld_info->infoArrayCount = 1;
+			// for(int i=0;i < dyld_info->infoArrayCount; i++) {
+      //    NSLog(@"[FlyJB] image: %s", dyld_info->infoArray[i].imageFilePath);
+      // }
 		}
 		return ret;
 	}
 	return %orig(target_task, flavor, task_info_out, task_info_outCnt);
+}
+
+void (*orig_dyld_register_func_for_add_image)(const struct mach_header *header, intptr_t slide);
+
+void hook_dyld_register_func_for_add_image(const struct mach_header *header, intptr_t slide) {
+	return;
+	// Dl_info dylib_info;
+	// dladdr(header, &dylib_info);
+	// NSString *detectedDyld = [NSString stringWithUTF8String:dylib_info.dli_fname];
+	// NSLog(@"[FlyJB] dyld_register_func_for_add_image: %@", detectedDyld);
+	// orig_dyld_register_func_for_add_image(header, slide);
 }
 %end
 
@@ -521,6 +546,8 @@ void loadSysHooks4() {
 
 void loadSysHooksForLiApp() {
 	%init(loadSysHooksForLiApp);
+	MSHookFunction((void*)connect,(void*)hook_connect,(void**)&orig_connect);
+	MSHookFunction((void*)_dyld_register_func_for_add_image, (void*)hook_dyld_register_func_for_add_image, (void**)&orig_dyld_register_func_for_add_image);
 }
 
 void loadOpendirSysHooks() {

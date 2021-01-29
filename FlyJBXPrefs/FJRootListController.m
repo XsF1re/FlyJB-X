@@ -15,7 +15,7 @@
 NSMutableDictionary *prefs_FlyJB;
 NSMutableDictionary *prefs_Optimize;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.1";
+static NSString *vers = @"1.1.2";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]

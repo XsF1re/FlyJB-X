@@ -150,6 +150,13 @@
 }
 %end
 
+//현대해상 - XAS, XFJailbreakDetection
+%hook XASJailbreakDetection
++(BOOL)isJailbroken {
+	return false;
+}
+%end
+
 //RaonSecure
 %hook mVaccine
 -(BOOL)isJailBreak {
