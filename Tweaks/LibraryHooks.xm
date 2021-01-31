@@ -13,7 +13,6 @@
 // }
 // %end
 
-
 //불명 - KB손해보험
 %hook JBHelper
 -(BOOL)getJBCResult {

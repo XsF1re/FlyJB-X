@@ -447,6 +447,11 @@
                              @"/jb/libjailbreak.dylib",
                              @"/private/var/cache/apt/",
                              @"/private/var/Users/",
+                             @"/var/cache/clutch.plist",
+                             @"/etc/clutch_cracked.plist",
+                             @"/var/cache/clutch_cracked.plist",
+                             @"/var/lib/clutch/overdrive.dylib",
+                             @"/var/root/Documents/Cracked/",
                              nil
                             ];
 }

@@ -10,9 +10,6 @@ TARGET := iphone:clang:13.1:7.1
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = FlyJBX
-$(TWEAK_NAME)_FRAMEWORKS = MobileCoreServices
-$(TWEAK_NAME)_LIBRARIES = MobileGestalt rocketbootstrap
-$(TWEAK_NAME)_PRIVATE_FRAMEWORKS = AppSupport
 $(TWEAK_NAME)_FILES = fishhook/fishhook.c Tweaks/FJPattern.xm Tweaks/Tweak.xm Tweaks/LibraryHooks.xm Tweaks/ObjCHooks.xm Tweaks/OptimizeDisableInjector.xm Tweaks/SysHooks.xm Tweaks/NoSafeMode.xm Tweaks/MemHooks.xm Tweaks/CheckHooks.xm Tweaks/PatchFinder.xm Tweaks/AeonLucid.xm ImportHooker/ImportHooker.c
 $(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
@@ -25,5 +22,5 @@ before-package::
 
 after-install::
 	install.exec "killall -9 SpringBoard"
-SUBPROJECTS += FlyJBXPrefs FJHooker
+SUBPROJECTS += FJHooker
 include $(THEOS_MAKE_PATH)/aggregate.mk

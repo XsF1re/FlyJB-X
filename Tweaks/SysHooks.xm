@@ -25,6 +25,13 @@
 // 	NSLog(@"[FlyJB] exit call stack:\n%@", [NSThread callStackSymbols]);
 // 	%orig;
 // }
+%hookf(int, dladdr, const void *addr, Dl_info *info) {
+	int ret = %orig;
+	if(addr == class_getMethodImplementation(objc_getClass("NSFileManager"), sel_registerName("fileExistsAtPath:"))) {
+			info->dli_fname = "/System/Library/Frameworks/Foundation.framework/Foundation";
+	}
+	return ret;
+}
 
 %hookf(int, uname, struct utsname *value) {
 	int ret = %orig;
