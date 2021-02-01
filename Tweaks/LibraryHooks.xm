@@ -250,6 +250,18 @@ static JobBase* sharedInstanceJB = nil;
 %end
 
 %hook AMSLFairPlayInspector
+-(id)init {
+	return self;
+}
+
++(id)fairPlayInspector {
+	return [[self alloc] init];
+}
+
+-(id)responseForChallenge {
+	return nil;
+}
+
 +(id)unarchive: (id)arg1 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	NSData *object_nsdata = [@"AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
@@ -266,7 +278,8 @@ static JobBase* sharedInstanceJB = nil;
 }
 
 -(id)fairPlayWithResponseAck: (id)arg1 {
-	return nil;
+	NSData *object_nsdata = [@"AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
+	return object_nsdata;
 }
 %end
 

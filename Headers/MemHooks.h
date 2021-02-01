@@ -8,6 +8,7 @@ void loadFJMemorySymbolHooks();
 void loadSVC80MemHooks();
 void loadSVC80OpenMemHooks();
 void loadSVC80AccessMemHooks();
+void loadSVC80ExitMemHooks();
 void loadOpendirMemHooks();
 void startHookTarget_lxShield(uint8_t* match);
 void startHookTarget_AhnLab(uint8_t* match);

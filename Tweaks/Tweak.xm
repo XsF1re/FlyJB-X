@@ -163,9 +163,11 @@
 				}
 			}
 
+//NSHCApps: 엘포인트, 엘페이, 알밤 매니저
 			NSArray *NSHCApps = [NSArray arrayWithObjects:
 																@"com.lottecard.LotteMembers",
 																@"kr.co.nmcs.lpay",
+																@"com.albamapp.OwnerR2",
 																nil
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
@@ -266,7 +268,7 @@
 		if(nProtectExist)
 			loadnProtectMemHooks();
 
-//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 롯데카드 일부 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 신한카드, 롯데카드 일부 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:
 															 @"com.hanaskcard.mobileportal",
 															 @"com.kebhana.hanapush",

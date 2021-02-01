@@ -19,7 +19,7 @@
 #define kCFCoreFoundationVersionNumber_iOS_14_0 1740.00
 
 %group SysHooks
-//
+
 // %hookf(void, exit, int code) {
 // 	NSLog(@"[FlyJB] exit called");
 // 	NSLog(@"[FlyJB] exit call stack:\n%@", [NSThread callStackSymbols]);

@@ -263,6 +263,25 @@ void loadSVC80OpenMemHooks() {
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80Open);
 }
+
+void SVC80Exit_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+	NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
+}
+
+void startHookTarget_SVC80Exit(uint8_t* match) {
+	// dobby_enable_near_branch_trampoline();
+	DobbyInstrument((void *)(match + 0x4), (DBICallTy)SVC80Exit_handler);
+	// dobby_disable_near_branch_trampoline();
+}
+
+void loadSVC80ExitMemHooks() {
+
+	const uint8_t target[] = {
+		0x30, 0x00, 0x80, 0xD2, //MOV X16, #1
+		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80Exit);
+}
 //
 // void blrx8_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 // 	uint64_t x8 = (uint64_t)(reg_ctx->general.regs.x8);
