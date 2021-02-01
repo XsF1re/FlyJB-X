@@ -170,21 +170,22 @@
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
 
-//NSHC 블랙리스트: 빗썸, 유안타증권
+//NSHC 블랙리스트: 빗썸, NSHC와 스틸리언 솔루션 둘다 적용된 앱
 			for(NSString* app in NSHCApps) {
-				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"] && ![bundleID isEqualToString:@"com.yuanta.tradarm"])) {
+				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"] && !(stealienExist && stealienExist2 && NSHCExist))) {
 					loadSVC80MemPatch();
 					break;
 				}
 			}
 
-//SVC탐지 + 스틸리언: 티머니 관련 4종, 유안타증권
+//SVC탐지 + 스틸리언: 티머니 관련 4종, 유안타증권, 키위뱅크(KB저축은행)
 			NSArray *SVCWithStealienApps = [NSArray arrayWithObjects:
 																@"com.tmoney.tmpay",
 																@"com.kscc.t-gift",
 																@"kr.co.ondataxi.passenger",
 																@"kr.co.tmoney.tia",
 																@"com.yuanta.tradarm",
+																@"com.kbsavings.app.KBsavingsMobile",
 																nil
 																];
 

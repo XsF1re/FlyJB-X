@@ -452,6 +452,21 @@
                              @"/var/cache/clutch_cracked.plist",
                              @"/var/lib/clutch/overdrive.dylib",
                              @"/var/root/Documents/Cracked/",
+                             @"bin/bash",
+                             @"bin/sh",
+                             @"etc/apt",
+                             @"etc/ssh/sshd_config",
+                             @"private/var/lib/apt",
+                             @"private/var/lib/cydia",
+                             @"private/var/mobile/Library/SBSettings/Themes",
+                             @"private/var/stash",
+                             @"private/var/tmp/cydia.log",
+                             @"usr/libexec/sftp-server",
+                             @"usr/libexec/ssh-keysign",
+                             @"usr/sbin/sshd",
+                             @"var/cache/apt",
+                             @"var/lib/apt",
+                             @"var/lib/cydia",
                              nil
                             ];
 }

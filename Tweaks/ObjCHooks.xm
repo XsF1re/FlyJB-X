@@ -78,12 +78,10 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (BOOL)isWritableFileAtPath: (NSString *)path {
-	if([path isEqualToString:@"/private/"]) {
+	if([[FJPattern sharedInstance] isSandBoxPathRestricted:path]) {
 		return NO;
 	}
-	else {
-		return %orig;
-	}
+	return %orig;
 }
 
 - (NSArray<NSString *> *)contentsOfDirectoryAtPath: (NSString *)path error: (NSError * _Nullable *)error {
