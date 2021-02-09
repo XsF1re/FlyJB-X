@@ -215,8 +215,8 @@
 			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks2();
 
-//NSHC lxShield v3 - LPay
-			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"])
+//NSHC lxShield v3 - LPay, LPoint, CJ대한통운
+			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"])
 				loadlxShieldMemHooks3();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구
@@ -268,7 +268,7 @@
 		if(nProtectExist)
 			loadnProtectMemHooks();
 
-//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 신한카드, 롯데카드 일부 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 신한카드, 롯데카드 등 Substrate 충돌 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:
 															 @"com.hanaskcard.mobileportal",
 															 @"com.kebhana.hanapush",

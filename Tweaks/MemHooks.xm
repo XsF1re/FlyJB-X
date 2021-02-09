@@ -148,7 +148,7 @@ void startPatchTarget_SYSOpen(uint8_t* match) {
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
-	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64 || syscall_num == SYS_setxattr || syscall_num == SYS_stat64 || syscall_num == SYS_rename) {
+	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64 || syscall_num == SYS_setxattr || syscall_num == SYS_stat64 || syscall_num == SYS_rename || syscall_num == SYS_stat) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 		NSString* path2 = [NSString stringWithUTF8String:path];
 		if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
@@ -179,6 +179,7 @@ void startHookTarget_SVC80(uint8_t* match) {
 
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80_handler);
+	// NSLog(@"[FlyJB] svc80: %p", match-_dyld_get_image_vmaddr_slide(0));
 	dobby_disable_near_branch_trampoline();
 
 }

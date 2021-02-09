@@ -249,6 +249,12 @@ static JobBase* sharedInstanceJB = nil;
 }
 %end
 
+%hook AMSLContaminationInspector
++(id)sharedInstance {
+	return nil;
+}
+%end
+
 %hook AMSLFairPlayInspector
 -(id)init {
 	return self;
