@@ -5,27 +5,6 @@ if [[ -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist
 else
     echo "[FlyJB X] Couldn't find kr.xsf1re.flyjb_crashfix.plist"
 fi
-if [[ -f "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" ]]; then
-	rm -f "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" &> /dev/null
-else
-	echo "[FlyJB X] Couldn't find FlyJBX.dylib"
-fi
-if [[ -f "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" ]]; then
-	rm -f "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" &> /dev/null
-else
-	echo "[FlyJB X] Couldn't find FlyJBX.plist"
-fi
-echo "[FlyJB X] Renaming files to remove..."
-if [[ -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" ]]; then
-	mv "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" &> /dev/null
-else
-	echo "[FlyJB X] Couldn't find renamed FlyJBX.dylib"
-fi
-if [[ -f "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" ]]; then
-	mv "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" &> /dev/null
-else
-	echo "[FlyJB X] Couldn't find renamed FlyJBX.plist"
-fi
 if [[ -f "/private/var/mobile/Library/Preferences/FJMemory" ]]; then
 	rm -f "/private/var/mobile/Library/Preferences/FJMemory" &> /dev/null
 else

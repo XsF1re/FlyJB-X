@@ -358,3 +358,13 @@ void loadMiniStockMemHooks() {
 	};
 	scan_executable_memory(target, sizeof(target), &startPatchTarget_MiniStock);
 }
+
+void loadTossMemHooks() {
+	const uint8_t target[] = {
+		0x16, 0x0F, 0x8B, 0xD2,
+		0x18, 0x6D, 0x8B, 0xD2,
+		0xD6, 0x6C, 0xB5, 0xF2,
+		0x58, 0x2F, 0xBA, 0xF2
+	};
+	scan_executable_memory(target, sizeof(target), &startPatchTarget_Toss);
+}

@@ -467,6 +467,18 @@
                              @"var/cache/apt",
                              @"var/lib/apt",
                              @"var/lib/cydia",
+                             @"/var/jb",
+                             @"/payload",
+                             @"/private/var/mobile/Library/Caches/kjc.loader",
+                             @"/.mount_rw",
+                             @"/.bootstrapped",
+                             @"/var/log/jailbreakd-stdout.log",
+                             @"/payload.dylib",
+                             @"/private/var/mobile/Library/Preferences/ABPattern",
+                             @"/usr/lib/ABDYLD.dylib",
+                             @"/usr/lib/ABSubLoader.dylib",
+                             @"/Library/PreferenceLoader/Preferences/ABypassPrefs.plist",
+                             @"Library/MobileSubstrate/MobileSubstrate.dylib",
                              nil
                             ];
 }

@@ -211,14 +211,16 @@ static int hook_syscall(int num, ...) {
 
 	memcpy(stack, args, 64);
 
-	if(num == SYS_access || num == SYS_open || num == SYS_stat || num == SYS_lstat || num == SYS_stat64 || num == SYS_chdir || num == SYS_chroot) {
+	if(num == SYS_access || num == SYS_open || num == SYS_stat || num == SYS_lstat || num == SYS_stat64 || num == SYS_chdir || num == SYS_chroot || num == SYS_pathconf || num == SYS_utimes || num == SYS_unmount) {
 		const char *path = va_arg(args, const char*);
 		if([[FJPattern sharedInstance] isPathRestricted:[NSString stringWithUTF8String:path]]) {
-			//NSLog(@"[FlyJB] Blocked Syscall Path = %s, num = %d", path, num);
+			// NSLog(@"[FlyJB] Blocked Syscall Path = %s, num = %d", path, num);
+			// NSLog(@"[FlyJB] syscall call stack:\n%@", [NSThread callStackSymbols]);
 			errno = ENOENT;
 			return -1;
 		}
-		//NSLog(@"[FlyJB] Detected Syscall Path = %s, num = %d", path, num);
+		// NSLog(@"[FlyJB] Detected Syscall Path = %s, num = %d", path, num);
+		// NSLog(@"[FlyJB] syscall call stack:\n%@", [NSThread callStackSymbols]);
 	}
 
 	if(num == SYS_mkdir) {

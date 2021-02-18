@@ -86,6 +86,15 @@
 		   || ([bundleID hasPrefix:@"com.ibk.ios.ionebank"] && [prefs[@"com.ibk.ios.ionebank"] boolValue])
 		   || ([bundleID hasPrefix:@"com.lguplus.mobile.cs"] && [prefs[@"com.lguplus.mobile.cs"] boolValue]))
 		{
+
+			//iXGuard - 토스 v4.993.0+
+			if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
+				Class oldClass = objc_getClass("StockNewsdmManager");
+				if(!oldClass) {
+					loadTossMemHooks();
+					return;	//앱 퍼모먼스 저하 방지
+				}
+			}
 			openDobby();
 
 			if([bundleID isEqualToString:@"com.kbstar.kbbank"])

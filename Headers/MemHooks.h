@@ -24,6 +24,7 @@ void startPatchTarget_KJBank2(uint8_t* match);
 void startPatchTarget_nProtect(uint8_t* match);
 void startPatchTarget_nProtect2(uint8_t* match);
 void startPatchTarget_MiniStock(uint8_t* match);
+void startPatchTarget_Toss(uint8_t* match);
 
 @interface MemHooks: NSObject
 - (NSDictionary *)getFJMemory;

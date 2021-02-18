@@ -20,6 +20,10 @@ before-package::
 	chmod 755 $(THEOS_STAGING_DIR)/Applications/FlyJB.app/FlyJB
 	ldid -Sappent.xml $(THEOS_STAGING_DIR)/Applications/FlyJB.app/FlyJB
 
+internal-stage::
+	mv "$(THEOS_STAGING_DIR)/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" "$(THEOS_STAGING_DIR)/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib"
+	mv "$(THEOS_STAGING_DIR)/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" "$(THEOS_STAGING_DIR)/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist"
+
 after-install::
 	install.exec "killall -9 SpringBoard"
 SUBPROJECTS += FJHooker

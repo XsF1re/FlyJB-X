@@ -126,6 +126,10 @@ void startPatchTarget_MiniStock(uint8_t* match) {
 	hook_memory(match - 0x1C, RET1, sizeof(RET1));
 }
 
+void startPatchTarget_Toss(uint8_t* match) {
+	hook_memory(match - 0x144, RET, sizeof(RET));
+}
+
 void startPatchTarget_SYSAccess(uint8_t* match) {
 
 	hook_memory(match, SYSAccessBlock, sizeof(SYSAccessBlock));
