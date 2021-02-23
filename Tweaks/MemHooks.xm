@@ -67,9 +67,8 @@ int ret_1(void)
 }
 
 void startHookTarget_lxShield(uint8_t* match) {
-
-	hook_memory(match - 0x1C, RET, sizeof(RET));
-
+	uint8_t *func = find_start_of_function(match);
+	hook_memory(func, RET, sizeof(RET));
 }
 
 void startHookTarget_AhnLab(uint8_t* match) {
@@ -127,7 +126,8 @@ void startPatchTarget_MiniStock(uint8_t* match) {
 }
 
 void startPatchTarget_Toss(uint8_t* match) {
-	hook_memory(match - 0x144, RET, sizeof(RET));
+	uint8_t *func = find_start_of_function(match);
+	hook_memory(func, RET, sizeof(RET));
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {

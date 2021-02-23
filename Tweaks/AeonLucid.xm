@@ -66,6 +66,67 @@ void scan_executable_memory(const uint8_t *target, const uint32_t target_len, vo
     }
 }
 
+uint8_t *find_start_of_function(const uint8_t *target) {
+  const struct mach_header_64 *header = (const struct mach_header_64*) _dyld_get_image_header(0);
+  const struct section_64 *executable_section = getsectbynamefromheader_64(header, "__TEXT", "__text");
+  uint32_t *start = (uint32_t *) ((intptr_t) header + executable_section->offset);
+
+  uint32_t *current = (uint32_t *)target;
+
+  for (; current >= start; current--) {
+    uint32_t op = *current;
+
+    if ((op & 0xFFC003FF) == 0x910003FD) {
+      unsigned delta = (op >> 10) & 0xFFF;
+      // NSLog(@"%p: ADD X29, SP, #0x%x\n", ((uint8_t *)current-_dyld_get_image_vmaddr_slide(0)), delta);
+      if ((delta & 0xF) == 0) {
+        // NSLog(@"[FlyJB] %p: ADD X29, SP, #0x%x\n", ((uint8_t *)current-_dyld_get_image_vmaddr_slide(0)), delta);
+        uint8_t *prev = (uint8_t *)current - ((delta >> 4) + 1) * 4;
+        // NSLog(@"[FlyJB] prev: %p, *prev: %x", prev-_dyld_get_image_vmaddr_slide(0), *(uint32_t *)prev);
+        if ((*(uint32_t *)prev & 0xFFC003E0) == 0xA98003E0
+            || (*(uint32_t *)prev & 0xFFC003E0) == 0x6D8003E0) {  //STP x, y, [SP,#-imm]!
+          return prev;
+        }
+      }
+    }
+  }
+
+  return (uint8_t *)target;
+}
+
+void scan_executable_memory_with_mask(const uint64_t *target, const uint64_t *mask, const uint32_t target_len, void (*callback)(uint8_t *)) {
+    const struct mach_header_64 *header = (const struct mach_header_64*) _dyld_get_image_header(0);
+    const struct section_64 *executable_section = getsectbynamefromheader_64(header, "__TEXT", "__text");
+
+    uint64_t *start_address = (uint64_t *) ((intptr_t) header + executable_section->offset);
+    uint64_t *end_address = (uint64_t *) (start_address + executable_section->size);
+
+    uint32_t *current = (uint32_t *)start_address;
+    uint32_t index = 0;
+
+    uint32_t current_target = 0;
+
+    while (start_address < end_address) {
+        current_target = target[index];
+
+        // NSLog(@"[FlyJB] current_target: %x, *current: %x, mask[index]: %llx", current_target, *current, mask[index]);
+        if (current_target == (*current++ & mask[index])) {
+          // NSLog(@"[FlyJB] index: %u, current_target: %x, *current: %x, mask[index]: %llx, target_len: %x", index, current_target, *current, mask[index], target_len);
+            index++;
+        } else {
+            index = 0;
+        }
+
+        // Check if match.
+        if (index == target_len) {
+            index = 0;
+            callback((uint8_t *)(current - target_len));
+        }
+
+        start_address+=0x4;
+    }
+}
+
 bool hook_memory(void *target, const void *data, size_t size) {
     mshookmemory_t MSHookMemory_ = (mshookmemory_t) MSFindSymbol(NULL, "_MSHookMemory");
 

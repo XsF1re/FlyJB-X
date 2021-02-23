@@ -222,11 +222,11 @@
 
 //NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사
 			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
-				loadlxShieldMemHooks2();
+				loadlxShieldMemHooks4();//loadlxShieldMemHooks2();
 
 //NSHC lxShield v3 - LPay, LPoint, CJ대한통운
 			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"])
-				loadlxShieldMemHooks3();
+				loadlxShieldMemHooks4();//loadlxShieldMemHooks3();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구
 			NSArray *mVaccineApps = [NSArray arrayWithObjects:

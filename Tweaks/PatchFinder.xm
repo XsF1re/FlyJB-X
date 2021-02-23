@@ -247,6 +247,15 @@ void loadlxShieldMemHooks3() {
 
 }
 
+void loadlxShieldMemHooks4() {
+	const uint8_t target[] = {
+		0x00, 0x40, 0x62, 0x1E,
+		0x00, 0x20, 0x28, 0x1E,
+		0xE8, 0x57, 0x9F, 0x1A
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
+}
+
 void loadAhnLabMemHooks() {
 
 	const uint8_t target[] = {
@@ -360,11 +369,19 @@ void loadMiniStockMemHooks() {
 }
 
 void loadTossMemHooks() {
-	const uint8_t target[] = {
-		0x16, 0x0F, 0x8B, 0xD2,
-		0x18, 0x6D, 0x8B, 0xD2,
-		0xD6, 0x6C, 0xB5, 0xF2,
-		0x58, 0x2F, 0xBA, 0xF2
+	const uint64_t target[] = {
+		0x7100051F,	// CMP W8, #1
+		0xF9000000,	// STR x*, [x*]
+		0x540000A1,	// B.NE #0x14
+		0xF9400000	// ldr x*, [x*, ...]
 	};
-	scan_executable_memory(target, sizeof(target), &startPatchTarget_Toss);
+
+	const uint64_t mask[] = {
+		0xFFFFFFFF,
+		0xFF000000,
+		0xFFFFFFFF,
+		0xFFC00000
+	};
+
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_Toss);
 }
