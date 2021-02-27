@@ -76,7 +76,7 @@ uint8_t *find_start_of_function(const uint8_t *target) {
   for (; current >= start; current--) {
     uint32_t op = *current;
 
-    if ((op & 0xFFC003FF) == 0x910003FD) {
+    if ((op & 0xFFC003FF) == 0x910003FD) {  //mov x29, sp
       unsigned delta = (op >> 10) & 0xFFF;
       // NSLog(@"%p: ADD X29, SP, #0x%x\n", ((uint8_t *)current-_dyld_get_image_vmaddr_slide(0)), delta);
       if ((delta & 0xF) == 0) {

@@ -1,6 +1,6 @@
 Package: kr.xsf1re.flyjbx
 Name: FlyJB X
-Version: 1.1.8
+Version: 1.1.10
 Depends: mobilesubstrate
 Conflicts: kr.xsf1re.flyjb
 Architecture: iphoneos-arm

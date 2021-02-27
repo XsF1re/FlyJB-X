@@ -13,4 +13,4 @@ void loadSVC80MemPatch();
 void loadKJBankMemHooks();
 void loadnProtectMemHooks();
 void loadMiniStockMemHooks();
-void loadTossMemHooks();
+void loadixGuardMemPatches();

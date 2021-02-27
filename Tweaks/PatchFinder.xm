@@ -368,20 +368,26 @@ void loadMiniStockMemHooks() {
 	scan_executable_memory(target, sizeof(target), &startPatchTarget_MiniStock);
 }
 
-void loadTossMemHooks() {
+void loadixGuardMemPatches() {
 	const uint64_t target[] = {
-		0x7100051F,	// CMP W8, #1
+		0x90000000, // ADRP
+		0x90000000, // ADRP
+		0x91000000, // ADD Xn, Xn, #imm
+		0x7100041F, // CMP wN, #1
 		0xF9000000,	// STR x*, [x*]
 		0x540000A1,	// B.NE #0x14
 		0xF9400000	// ldr x*, [x*, ...]
 	};
 
 	const uint64_t mask[] = {
-		0xFFFFFFFF,
+		0x9F000000,
+		0x9F000000,
+		0xFF000000,
+		0xFFFFFC1F,
 		0xFF000000,
 		0xFFFFFFFF,
 		0xFFC00000
 	};
 
-	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_Toss);
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_ixGuard);
 }

@@ -87,12 +87,12 @@
 		   || ([bundleID hasPrefix:@"com.lguplus.mobile.cs"] && [prefs[@"com.lguplus.mobile.cs"] boolValue]))
 		{
 
-			//iXGuard - 토스 v4.993.0+
+			//iXGuard - 토스 v4.993.0+, TrueMoney Wallet
 			if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 				Class oldClass = objc_getClass("StockNewsdmManager");
 				if(!oldClass) {
-					loadTossMemHooks();
-					return;	//앱 퍼모먼스 저하 방지
+					loadixGuardMemPatches();
+					return;	//앱 성능 저하 방지
 				}
 			}
 			openDobby();

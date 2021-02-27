@@ -125,8 +125,9 @@ void startPatchTarget_MiniStock(uint8_t* match) {
 	hook_memory(match - 0x1C, RET1, sizeof(RET1));
 }
 
-void startPatchTarget_Toss(uint8_t* match) {
+void startPatchTarget_ixGuard(uint8_t* match) {
 	uint8_t *func = find_start_of_function(match);
+	// NSLog(@"[FlyJB] Found ixGuard: %p", func - _dyld_get_image_vmaddr_slide(0));
 	hook_memory(func, RET, sizeof(RET));
 }
 
@@ -152,30 +153,30 @@ void startPatchTarget_SYSOpen(uint8_t* match) {
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
-	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64 || syscall_num == SYS_setxattr || syscall_num == SYS_stat64 || syscall_num == SYS_rename || syscall_num == SYS_stat) {
+	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64 || syscall_num == SYS_setxattr || syscall_num == SYS_stat64 || syscall_num == SYS_rename || syscall_num == SYS_stat || syscall_num == SYS_utimes || syscall_num == SYS_unmount || syscall_num == SYS_pathconf) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 		NSString* path2 = [NSString stringWithUTF8String:path];
 		if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
 			*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";
-			NSLog(@"[FlyJB] Bypassed SVC #0x80 - num: %d, path: %s", syscall_num, path);
+			// NSLog(@"[FlyJB] Bypassed SVC #0x80 - num: %d, path: %s", syscall_num, path);
 		}
-		else {
-			NSLog(@"[FlyJB] Detected SVC #0x80 - num: %d, path: %s", syscall_num, path);
-		}
+		// else {
+			// NSLog(@"[FlyJB] Detected SVC #0x80 - num: %d, path: %s", syscall_num, path);
+		// }
 	}
 
-	else if(syscall_num == SYS_syscall) {
-		int x0 = (int)(uint64_t)reg_ctx->general.regs.x0;
-		NSLog(@"[FlyJB] Detected syscall of SVC #0x80 number: %d", x0);
-	}
+	// else if(syscall_num == SYS_syscall) {
+		// int x0 = (int)(uint64_t)reg_ctx->general.regs.x0;
+		// NSLog(@"[FlyJB] Detected syscall of SVC #0x80 number: %d", x0);
+	// }
 
-	else if(syscall_num == SYS_exit) {
-		NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
-	}
+	// else if(syscall_num == SYS_exit) {
+		// NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
+	// }
 
-	else {
-		NSLog(@"[FlyJB] Detected Unknown SVC #0x80 number: %d", syscall_num);
-	}
+	// else {
+		// NSLog(@"[FlyJB] Detected Unknown SVC #0x80 number: %d", syscall_num);
+	// }
 
 }
 

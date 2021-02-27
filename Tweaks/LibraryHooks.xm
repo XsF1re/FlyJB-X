@@ -1,5 +1,6 @@
 #import "../Headers/LibraryHooks.h"
 #import "../Headers/FJPattern.h"
+#import <UIKit/UIKit.h>
 
 @interface JobBase : NSObject
 +(id)sharedInstance;
@@ -12,6 +13,16 @@
 // 	return @"1";
 // }
 // %end
+
+//LiApp - Don't block device.
+%hook w0n6Y
+-(id)u0tutZS {
+	// id orig = %orig;
+	NSString *str = [[NSUUID UUID] UUIDString];
+	// NSLog(@"[FlyJB] u0tutZS: %@ -> %@", orig, str);
+	return str;
+}
+%end
 
 //불명 - KB손해보험
 %hook JBHelper

@@ -22,6 +22,7 @@ VERSION="1.0"
 
 #Name for tweak
 NAME="FlyJBX"
+NAME2="FJHooker"
 
 # Pref name for tweak
 PREF_NAME="FlyJBXPrefs"
@@ -54,8 +55,9 @@ echo -e "Making ${BGreen}${ARCHS}${normal} for ${BGreen}$(sudo xcode-select -p)$
 make clean
 make package
 
-cp .theos/_/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib ./bin/tmp/arm64e.dylib 
-cp .theos/_/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME} ./bin/tmp/arm64e 
+cp .theos/_/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib ./bin/tmp/arm64e.dylib
+cp .theos/_/usr/lib/${NAME2}.dylib ./bin/tmp/arm64e
+#cp .theos/_/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME} ./bin/tmp/arm64e
 
 #swap xcodes to use xcode11
 sudo xcode-select -s ${XCODE11}
@@ -65,8 +67,9 @@ echo -e "Making ${BGreen}${ARCHS}${normal} for ${BGreen}$(sudo xcode-select -p)$
 make clean
 make package
 
-cp .theos/_/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib ./bin/tmp/arm64e_legacy.dylib 
-cp .theos/_/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME} ./bin/tmp/arm64e_legacy
+cp .theos/_/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib ./bin/tmp/arm64e_legacy.dylib
+cp .theos/_/usr/lib/${NAME2}.dylib ./bin/tmp/arm64e_legacy
+#cp .theos/_/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME} ./bin/tmp/arm64e_legacy
 
 echo -e "${BGreen} Stripping extra arm64 architecture from legacy build ${normal}"
 ./bin/lipo_patched -remove arm64 ./bin/tmp/arm64e_legacy.dylib -o ./bin/tmp/arm64e_legacy_stripped.dylib  
@@ -87,15 +90,15 @@ ldid2 -S ./bin/tmp/arm64e
 ldid2 -S ./bin/tmp/arm64e_legacy
 
 ./bin/lipo_patched -create ./bin/tmp/arm64e_legacy.dylib ./bin/tmp/arm64e.dylib -output ./bin/tmp/${NAME}.dylib
-./bin/lipo_patched -create ./bin/tmp/arm64e_legacy ./bin/tmp/arm64e -output ./bin/tmp/${PREF_NAME}
+./bin/lipo_patched -create ./bin/tmp/arm64e_legacy ./bin/tmp/arm64e -output ./bin/tmp/${NAME2}.dylib
 
 echo -e "${BGreen} Done! ${normal}"
 file ./bin/tmp/${NAME}.dylib
-file ./bin/tmp/${PREF_NAME}
+file ./bin/tmp/${NAME2}.dylib
 
 echo -e "${BYellow} Signing binary... ${normal}"
 ldid2 -S ./bin/tmp/${NAME}.dylib
-ldid2 -S ./bin/tmp/${PREF_NAME}
+ldid2 -S ./bin/tmp/${NAME2}.dylib
 
 echo -e "${BYellow} Resetting xcode back to latest version ${normal}"
 
@@ -117,14 +120,14 @@ mv ./bin/tmp/deb/_ ${DEB_DIR}
 
 echo -e "${BYellow} Moving binary... ${normal}"
 rm -rf ${DEB_DIR}/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib
-rm -rf ${DEB_DIR}/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME}
+rm -rf ${DEB_DIR}/usr/lib/${NAME2}.dylib
 
 mv ./bin/tmp/${NAME}.dylib ${DEB_DIR}/Library/MobileSubstrate/DynamicLibraries/
-mv ./bin/tmp/${PREF_NAME} ${DEB_DIR}/Library/PreferenceBundles/${PREF_NAME}.bundle/
+mv ./bin/tmp/${NAME2}.dylib ${DEB_DIR}/usr/lib/
 
 echo -e "${BYellow} Verifying binary move... ${normal}"
 file ${DEB_DIR}/Library/MobileSubstrate/DynamicLibraries/${NAME}.dylib
-file ${DEB_DIR}/Library/PreferenceBundles/${PREF_NAME}.bundle/${PREF_NAME}
+file ${DEB_DIR}/usr/lib/${NAME2}.dylib
 
 echo -e "${BYellow} Make load binary first... ${normal}"
 mv "${DEB_DIR}/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" "${DEB_DIR}/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib"
