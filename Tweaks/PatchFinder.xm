@@ -376,7 +376,7 @@ void loadixGuardMemPatches() {
 		0x7100041F, // CMP wN, #1
 		0xF9000000,	// STR x*, [x*]
 		0x540000A1,	// B.NE #0x14
-		0xF9400000	// ldr x*, [x*, ...]
+		0xF9400000	// LDR x*, [x*, ...]
 	};
 
 	const uint64_t mask[] = {
@@ -390,4 +390,22 @@ void loadixGuardMemPatches() {
 	};
 
 	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_ixGuard);
+}
+
+void loadHanaBankMemPatches() {
+	const uint64_t target[] = {
+		// ADRP            X8, #selRef_getk@PAGE
+		// ...
+		0x52800020,	// MOV x*, #1
+		0x52800000,	// MOV x*, #0
+		0x14000000	// B
+	};
+
+	const uint64_t mask[] = {
+		0xFFFFFFF0,
+		0xFFFFFFF0,
+		0xFF000000
+	};
+
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_HanaBank);
 }

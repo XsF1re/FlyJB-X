@@ -140,10 +140,6 @@
 
 //Arxan? 하나은행
 %hook DataManager
-//(구)하나은행
--(void)setP_gCheckGuard: (id)arg1 {
-	;
-}
 //NEW하나은행
 -(void)setGCheckGuard: (id)arg1 {
 	;

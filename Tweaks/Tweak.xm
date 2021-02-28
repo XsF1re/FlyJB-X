@@ -102,6 +102,9 @@
 
 			loadFJMemoryHooks();
 
+			if([bundleID isEqualToString:@"com.kebhana.hanapush"])
+				loadHanaBankMemPatches();
+
 //Arxan 메모리 패치
 			if([bundleID isEqualToString:@"com.hana.hanamembers"] || [bundleID isEqualToString:@"com.lottecard.mobilepay"])
 				loadFJMemoryIntegrityRecover();
@@ -228,11 +231,9 @@
 			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"])
 				loadlxShieldMemHooks4();//loadlxShieldMemHooks3();
 
-//RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구
+//RaonSecure TouchEn mVaccine - 비플제로페이, 미래에셋생명 모바일창구
 			NSArray *mVaccineApps = [NSArray arrayWithObjects:
 																@"com.bizplay.zeropay",
-																@"com.hanabank.smart.HanaNBank",
-																@"com.kebhana.hanapush",
 																@"com.miraeasset.mobilewindow",
 																nil
 																];

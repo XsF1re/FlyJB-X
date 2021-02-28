@@ -14,3 +14,4 @@ void loadKJBankMemHooks();
 void loadnProtectMemHooks();
 void loadMiniStockMemHooks();
 void loadixGuardMemPatches();
+void loadHanaBankMemPatches();

@@ -131,6 +131,12 @@ void startPatchTarget_ixGuard(uint8_t* match) {
 	hook_memory(func, RET, sizeof(RET));
 }
 
+void startPatchTarget_HanaBank(uint8_t* match) {
+	uint8_t *func = find_start_of_function(match);
+	// NSLog(@"[FlyJB] match: %p, Found HanaBank: %p", match - _dyld_get_image_vmaddr_slide(0),func - _dyld_get_image_vmaddr_slide(0));
+	hook_memory(func, RET, sizeof(RET));
+}
+
 void startPatchTarget_SYSAccess(uint8_t* match) {
 
 	hook_memory(match, SYSAccessBlock, sizeof(SYSAccessBlock));

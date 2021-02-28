@@ -227,7 +227,7 @@ static int hook_sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void
 		if([kernelName_ns containsString:@"hacked"] || [kernelName_ns containsString:@"MarijuanARM"]) {
 			kernelName_ns = [kernelName_ns stringByReplacingOccurrencesOfString:@"hacked" withString:@""];
 			kernelName_ns = [kernelName_ns stringByReplacingOccurrencesOfString:@"MarijuanARM" withString:@""];
-			const char* kernelName = [kernelName_ns cStringUsingEncoding:NSUTF16StringEncoding];
+			const char* kernelName = [kernelName_ns cStringUsingEncoding:NSUTF8StringEncoding];
 			strncpy((char*)oldp, kernelName, strlen(kernelName));
 			*oldlenp = sizeof(kernelName);
 		}
