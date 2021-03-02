@@ -20,6 +20,7 @@ static NSError *_error_file_not_found = nil;
 // }
 // %end
 //
+// %hook ViewHelper
 // +(void)showAlertAndExit:(id)arg1 {
 // 	NSLog(@"[FlyJB] ViewHelper: %@", arg1);
 // 	%orig;

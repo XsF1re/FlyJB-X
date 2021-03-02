@@ -235,16 +235,6 @@ static int hook_sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void
 	return orig;
 }
 
-static kern_return_t (*orig_task_for_pid)(mach_port_name_t target_tport, int pid, mach_port_name_t *t);
-static kern_return_t hook_task_for_pid(mach_port_name_t target_tport, int pid, mach_port_name_t *t) {
-	if(pid == 0) {
-		// NSLog(@"[FlyJB] Blocked task_for_pid pid = %d", pid);
-		return KERN_FAILURE;
-	}
-	// NSLog(@"[FlyJB] Detected task_for_pid pid = %d", pid);
-	return orig_task_for_pid(target_tport, pid, t);
-}
-
 static int (*orig_statvfs)(const char *path, struct statvfs *buf);
 static int hook_statvfs(const char *path, struct statvfs *buf) {
 	int orig = orig_statvfs(path, buf);
@@ -649,10 +639,6 @@ void loadSysHooks() {
 void loadSysHooks2() {
 	%init(SysHooks2);
 	MSHookFunction((void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname);
-	// task_for_pid hook crash on Substrate, so all apps will be crashed... WTF?
-	// task_for_pid hook crash on Substitute when optimize list enabled... WTF?
-	// MSHookFunction((void*)task_for_pid, (void*)hook_task_for_pid, (void**)&orig_task_for_pid);
-	rebind_symbols((struct rebinding[1]){{"task_for_pid", (void *)hook_task_for_pid, (void **)&orig_task_for_pid}}, 1);
 	MSHookFunction((void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs);
 	MSHookFunction((void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf);
 	MSHookFunction((void*)unmount, (void*)hook_unmount, (void**)&orig_unmount);
