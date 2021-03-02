@@ -649,7 +649,10 @@ void loadSysHooks() {
 void loadSysHooks2() {
 	%init(SysHooks2);
 	MSHookFunction((void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname);
-	MSHookFunction((void*)task_for_pid, (void*)hook_task_for_pid, (void**)&orig_task_for_pid);
+	// task_for_pid hook crash on Substrate, so all apps will be crashed... WTF?
+	// task_for_pid hook crash on Substitute when optimize list enabled... WTF?
+	// MSHookFunction((void*)task_for_pid, (void*)hook_task_for_pid, (void**)&orig_task_for_pid);
+	rebind_symbols((struct rebinding[1]){{"task_for_pid", (void *)hook_task_for_pid, (void **)&orig_task_for_pid}}, 1);
 	MSHookFunction((void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs);
 	MSHookFunction((void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf);
 	MSHookFunction((void*)unmount, (void*)hook_unmount, (void**)&orig_unmount);

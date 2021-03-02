@@ -13,6 +13,47 @@ static NSError *_error_file_not_found = nil;
 // }
 // %end
 
+// %hook UIViewController
+// -(void)setRootViewController:(UIViewController *)arg1 {
+// 	NSLog(@"[FlyJB] UIWindow setRootViewController");
+// 	%orig;
+// }
+// %end
+//
+// +(void)showAlertAndExit:(id)arg1 {
+// 	NSLog(@"[FlyJB] ViewHelper: %@", arg1);
+// 	%orig;
+// }
+// %end
+//
+// %hook UIStoryboard
+// + (UIStoryboard *)storyboardWithName:(NSString *)name bundle:(NSBundle *)storyboardBundleOrNil {
+// 	// if([name isEqualToString:@"LaunchScreen"] && !storyboardBundleOrNil)
+// 	// 	return %orig(@"Main", [NSBundle mainBundle]);
+// 	NSLog(@"[FlyJB] UIStoryboard: %@, storyboardBundleOrNil: %@", name, storyboardBundleOrNil);
+// 	return %orig;
+// }
+//
+// -(id)instantiateInitialViewController {
+// 	id orig = %orig;
+// 	NSLog(@"[FlyJB] UIStoryboard instantiateInitialViewController: %@", orig);
+// 	return orig;
+// }
+// %end
+//
+// %hook UIView
+// +(void)transitionWithView:(id)arg1 duration:(double)arg2 options:(unsigned long long)arg3 animations:(/*^block*/id)arg4 completion:(/*^block*/id)arg5 {
+// 	NSLog(@"[FlyJB] UIView transitionWithView: %@, duration: %f, options: %llu, animations: %@, completion: %@", arg1, arg2, arg3, arg4, arg5);
+// 	%orig;
+// }
+//
+// -(id)window {
+// 	id orig = %orig;
+// 	// NSLog(@"[FlyJB] window: %@", orig);
+// 	return orig;
+// }
+// %end
+
 %hook UIApplication
 -(BOOL)openURL:(NSURL *)url {
 	if([[FJPattern sharedInstance] isURLRestricted:url]) {
