@@ -26,6 +26,9 @@ void startPatchTarget_nProtect2(uint8_t* match);
 void startPatchTarget_MiniStock(uint8_t* match);
 void startPatchTarget_ixGuard(uint8_t* match);
 void startPatchTarget_HanaBank(uint8_t* match);
+void startPatchTarget_Yoti(uint8_t* match);
+void setTossPatched(bool isPatched);
+bool isTossPatched();
 
 @interface MemHooks: NSObject
 - (NSDictionary *)getFJMemory;

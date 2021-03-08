@@ -68,6 +68,8 @@
 	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
 	BOOL isLibHooker = [[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"];
 	BOOL DobbyHook = [prefs[@"enableDobby"] boolValue];
+	BOOL tossHasOldClass = true;
+	setTossPatched(false);
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		loadNoSafeMode();
@@ -91,6 +93,7 @@
 			if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 				Class oldClass = objc_getClass("StockNewsdmManager");
 				if(!oldClass) {
+					tossHasOldClass = false;
 					loadixGuardMemPatches();
 					return;	//앱 성능 저하 방지
 				}
@@ -227,8 +230,9 @@
 			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks4();//loadlxShieldMemHooks2();
 
-//NSHC lxShield v3 - LPay, LPoint, CJ대한통운
-			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"])
+//NSHC lxShield v3 - LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet
+			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"]
+				|| [bundleID isEqualToString:@"com.hyundaicapital.myAccount"] || [bundleID isEqualToString:@"com.BNSWorks.iTSmartWallet"])
 				loadlxShieldMemHooks4();//loadlxShieldMemHooks3();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 미래에셋생명 모바일창구
@@ -245,6 +249,10 @@
 					}
 					break;
 				}
+
+//Arxan? - Yoti
+			if([bundleID isEqualToString:@"com.yoti.mobile.ios.live"])
+				loadYotiMemPatches();
 
 //Arxan - 스마일페이, 페이코
 			NSArray *ArxanApps = [NSArray arrayWithObjects:
@@ -309,7 +317,11 @@
 				loadSysHooks3();
 			}
 
-			loadDlsymSysHooks();
+			//Substitute crash when enabled optimize list
+			NSMutableDictionary *prefs_optimize = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"];
+			if(![prefs_optimize[bundleID] boolValue])
+				loadDlsymSysHooks();
+
 			loadOpendirSysHooks();
 
 			loadObjCHooks();
@@ -319,6 +331,10 @@
 	}
 
 	//토스 탈옥감지 확인
-	if([bundleID isEqualToString:@"com.vivarepublica.cash"])
+	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		loadCheckHooks();
+		if(!tossHasOldClass && !isTossPatched()) {
+			showAlertBypassFailedToss();
+		}
+	}
 }

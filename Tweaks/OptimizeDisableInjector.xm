@@ -24,18 +24,16 @@
 	NSString *bundleID = executionContext.identity.embeddedApplicationIdentifier;
 	BOOL optimizeEnabled = [prefs[bundleID] boolValue] && [prefs_optimize [bundleID] boolValue] && ![prefs_disabler [bundleID] boolValue];
 
-	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
-		return %orig;
-	}
-
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue] || optimizeEnabled) {
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
 					if(optimizeEnabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
-					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
-					[environmentM setObject:@(1) forKey:@"_SafeMode"];
+					if(!([bundleID isEqualToString:@"com.vivarepublica.cash"] && [prefs_disabler[bundleID] boolValue])) {
+						[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
+						[environmentM setObject:@(1) forKey:@"_SafeMode"];
+					}
 					executionContext.environment = [environmentM copy];
 		}
 	}
@@ -49,18 +47,16 @@
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
 	BOOL optimizeEnabled = [prefs[bundleID] boolValue] && [prefs_optimize [bundleID] boolValue] && ![prefs_disabler [bundleID] boolValue];
 
-	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
-		return %orig;
-	}
-
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue] || optimizeEnabled) {
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
 					if(optimizeEnabled)
 						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
-					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
-					[environmentM setObject:@(1) forKey:@"_SafeMode"];
+					if(!([bundleID isEqualToString:@"com.vivarepublica.cash"] && [prefs_disabler[bundleID] boolValue])) {
+						[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
+						[environmentM setObject:@(1) forKey:@"_SafeMode"];
+					}
 					executionContext.environment = [environmentM copy];
 		}
 	}

@@ -27,7 +27,7 @@ void kabank_ret(void) {}
 for(i = 0, cmd = (cmds); i < (ncmds); i++, cmd = NEXTCMD(cmd))
 
 
-static int print_symbols(void* map, size_t filesize) {
+static int print_symbols(void* map, size_t filesize, const char* kabankLibPath) {
 	bool is64bit = false;
 	uint32_t i, ncmds;
 	struct load_command* cmd, *cmds;
@@ -114,7 +114,8 @@ static int print_symbols(void* map, size_t filesize) {
 			&& [symname2 length] == 34)
       {
         NSLog(@"[FlyJB] Symbol \"%s\" type: %s value: 0x%llx\n", symname, type, nl->n_value);
-        MSHookFunction(MSFindSymbol(NULL, symname), (void *)kabank_ret, (void **)&orig_kabank);
+				MSImageRef image = MSGetImageByName(kabankLibPath);
+        MSHookFunction(MSFindSymbol(image, symname), (void *)kabank_ret, (void **)&orig_kabank);
       }
 		}
 	}
@@ -162,7 +163,8 @@ static int print_symbols(void* map, size_t filesize) {
 			&& [symname2 length] == 34)
 			{
         NSLog(@"[FlyJB] Symbol \"%s\" type: %s value: 0x%x\n", symname, type, nl->n_value);
-        MSHookFunction(MSFindSymbol(NULL, symname), (void *)kabank_ret, (void **)&orig_kabank);
+				MSImageRef image = MSGetImageByName(kabankLibPath);
+        MSHookFunction(MSFindSymbol(image, symname), (void *)kabank_ret, (void **)&orig_kabank);
       }
 		}
 	}
@@ -205,7 +207,7 @@ int kakaoBankPatch() {
 	}
 
 	/* Attempt to print the names of all symbols */
-	int ret = print_symbols(map, filesize);
+	int ret = print_symbols(map, filesize, kabankLibPath);
 
 	/* Clean up */
 	munmap(map, filesize);
@@ -408,4 +410,26 @@ void loadHanaBankMemPatches() {
 	};
 
 	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_HanaBank);
+}
+
+void loadYotiMemPatches() {
+	const uint64_t target[] = {
+		0xAA0003E0,	// MOV xN, xM
+		0x94000000,	// BL
+		0xB9000000,	// STR w*, [x*]
+		0x14000000,	// B
+		0x52800020,	// MOV w*, 0x1
+		0xB9000000	// STR w*, [x*]
+	};
+
+	const uint64_t mask[] = {
+		0xFFE0FFE0,
+		0xFC000000,
+		0xFF000000,
+		0xFF000000,
+		0xFFFFFFF0,
+		0xFF000000
+	};
+
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_Yoti);
 }

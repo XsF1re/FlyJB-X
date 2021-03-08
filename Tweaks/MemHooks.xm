@@ -20,6 +20,11 @@ uint8_t RET[] = {
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
 
+uint8_t RET0[] = {
+	0x00, 0x00, 0x80, 0xD2,	//MOV X0, #0
+	0xC0, 0x03, 0x5F, 0xD6  //RET
+};
+
 uint8_t RET1[] = {
 	0x20, 0x00, 0x80, 0xD2,	//MOV X0, #1
 	0xC0, 0x03, 0x5F, 0xD6  //RET
@@ -125,9 +130,19 @@ void startPatchTarget_MiniStock(uint8_t* match) {
 	hook_memory(match - 0x1C, RET1, sizeof(RET1));
 }
 
+static bool tossPatched = false;
+void setTossPatched(bool isPatched) {
+	tossPatched = isPatched;
+}
+
+bool isTossPatched() {
+	return tossPatched;
+}
+
 void startPatchTarget_ixGuard(uint8_t* match) {
 	uint8_t *func = find_start_of_function(match);
 	// NSLog(@"[FlyJB] Found ixGuard: %p", func - _dyld_get_image_vmaddr_slide(0));
+	setTossPatched(true);
 	hook_memory(func, RET, sizeof(RET));
 }
 
@@ -135,6 +150,10 @@ void startPatchTarget_HanaBank(uint8_t* match) {
 	uint8_t *func = find_start_of_function(match);
 	// NSLog(@"[FlyJB] match: %p, Found HanaBank: %p", match - _dyld_get_image_vmaddr_slide(0),func - _dyld_get_image_vmaddr_slide(0));
 	hook_memory(func, RET, sizeof(RET));
+}
+
+void startPatchTarget_Yoti(uint8_t* match) {
+	hook_memory(match - 0x60, RET0, sizeof(RET0));
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {
