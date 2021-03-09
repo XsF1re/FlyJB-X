@@ -514,6 +514,11 @@
                              @"/Library/MobileSubstrate/DynamicLibraries/ATTweak.dylib",
                              @"/Library/MobileSubstrate/DynamicLibraries/ATTweak.plist",
                              @"/var/mobile/Library/AutoTouch",
+                             @"/private/etc/apt",
+                             @"/bin/sw",
+                             @"/Applications/goblin.app/Applications/blackra1n.app",
+                             @"/Applications/Cycorder.app",
+                             @"/Applications/Loader.app",
                              nil
                             ];
 }

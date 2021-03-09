@@ -156,12 +156,13 @@
 			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
 				loadKJBankMemHooks();
 
-//따로 제작? 불명 - AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드)
+//따로 제작? 불명 - AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드), NH 투자증권 QV
 			NSArray *UnkApps = [NSArray arrayWithObjects:
 																@"com.epost.psf.sd",
 																@"org.kftc.fido.lnk.lnkApp",
 																@"com.wooriwm.txsmart",
 																@"kr.or.kftc.fsc.dist",
+																@"com.wooriwm.mugsmart",
 																nil
 																];
 
@@ -319,7 +320,7 @@
 
 			//Substitute crash when enabled optimize list
 			NSMutableDictionary *prefs_optimize = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_optimize.plist"];
-			if(![prefs_optimize[bundleID] boolValue])
+			if(isSubstitute && ![prefs_optimize[bundleID] boolValue])
 				loadDlsymSysHooks();
 
 			loadOpendirSysHooks();

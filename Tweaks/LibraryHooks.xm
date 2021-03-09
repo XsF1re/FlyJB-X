@@ -246,7 +246,7 @@ static JobBase* sharedInstanceJB = nil;
 
 //AhnLab
 //SBI저축은행
-%hook LayoutManag
+%hook THREAD_POLI
 -(int)a3142:(id)arg1 {
 	return 200;
 }
