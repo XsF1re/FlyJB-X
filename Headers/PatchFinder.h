@@ -8,6 +8,7 @@ void loadlxShieldMemHooks2();
 void loadlxShieldMemHooks3();
 void loadlxShieldMemHooks4();
 void loadAhnLabMemHooks();
+void loadAhnLabMemHooks2();
 void loadAppSolidMemHooks();
 void loadSVC80MemPatch();
 void loadKJBankMemHooks();

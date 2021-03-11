@@ -1,5 +1,6 @@
 #import "../Headers/LibraryHooks.h"
 #import "../Headers/FJPattern.h"
+#import "../Headers/AeonLucid.h"
 #import <UIKit/UIKit.h>
 
 @interface JobBase : NSObject
@@ -13,7 +14,6 @@
 // 	return @"1";
 // }
 // %end
-
 //LiApp - Don't block device.
 %hook w0n6Y
 -(id)u0tutZS {
@@ -197,6 +197,20 @@ static JobBase* sharedInstanceJB = nil;
 }
 %end
 
+//NSHC ixShield EORMOVSVC - IBK투자증권
+%hook External
+-(void)sysCheckStart_ix:(id)arg1 {
+	;
+}
+%end
+
+//NSHC ixShield EORMOVSVC - 한화손해보험
+%hook AppDelegate
+-(void) checkNSHC {
+	;
+}
+%end
+
 //NSHC
 %hook SN_SelfChecker
 -(BOOL)startToCheckError:(id*)arg1 {
@@ -246,6 +260,16 @@ static JobBase* sharedInstanceJB = nil;
 
 //AhnLab
 //SBI저축은행
+%hook TypesCanoni
+-(int)a3142:(id)arg1 {
+	return 200;
+}
+
+-(int)timestamp {
+	return 0;
+}
+%end
+
 %hook THREAD_POLI
 -(int)a3142:(id)arg1 {
 	return 200;
@@ -255,6 +279,7 @@ static JobBase* sharedInstanceJB = nil;
 	return 0;
 }
 %end
+//SBI저축은행 끝
 
 %hook AMSLContaminationInspector
 +(id)sharedInstance {

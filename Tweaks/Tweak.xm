@@ -100,6 +100,13 @@
 			}
 			openDobby();
 
+			//	Only work with SVC80MemHooks
+			//	Arxan - 하나금융투자 프로
+			if([bundleID isEqualToString:@"com.hanasec.stock"]) {
+					loadSVC80AccessMemHooks();
+					return;
+			}
+
 			if([bundleID isEqualToString:@"com.kbstar.kbbank"])
 				loadNoSafeMode();
 
@@ -118,8 +125,11 @@
 			}
 //AhnLab Mobile Security - NH올원페이, 하나카드, NH스마트뱅킹, NH농협카드, 하나카드 원큐페이(앱카드), NH스마트알림, NH올원뱅크, NH콕뱅크...
 			Class AhnLabExist = objc_getClass("AMSLContaminationInspector");
-			if(AhnLabExist)
+			if(AhnLabExist && ![bundleID isEqualToString:@"com.samsungpop.ios.masset"])
 				loadAhnLabMemHooks();
+//Ahnlab v2? - 오늘의 투자 O2
+			else if([bundleID isEqualToString:@"com.samsungpop.ios.masset"])
+				loadAhnLabMemHooks2();
 
 //락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원, blind...
 			Class LiappExist = objc_getClass("Liapp");
@@ -138,11 +148,12 @@
 			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
 				loadYogiyoObjcHooks();
 
-//AppSolid - 코레일톡, NICE지키미, 나이스아이핀
+//AppSolid - 코레일톡, NICE지키미, 나이스아이핀, 한화생명보험월렛
 			NSArray *AppSolidApps = [NSArray arrayWithObjects:
 																@"com.korail.KorailTalk",
 																@"com.nice.MyCreditManager",
 																@"com.niceid.niceipin",
+																@"com.hanwhalife.hiw",
 																nil
 																];
 			for(NSString* app in AppSolidApps) {
@@ -231,9 +242,9 @@
 			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks4();//loadlxShieldMemHooks2();
 
-//NSHC lxShield v3 - LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet
+//NSHC lxShield v3 - LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet, Syrup Wallet, 한투S smart
 			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"]
-				|| [bundleID isEqualToString:@"com.hyundaicapital.myAccount"] || [bundleID isEqualToString:@"com.BNSWorks.iTSmartWallet"])
+				|| [bundleID isEqualToString:@"com.hyundaicapital.myAccount"] || [bundleID isEqualToString:@"com.BNSWorks.iTSmartWallet"] || [bundleID isEqualToString:@"com.kisb.smartKISB"])
 				loadlxShieldMemHooks4();//loadlxShieldMemHooks3();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 미래에셋생명 모바일창구

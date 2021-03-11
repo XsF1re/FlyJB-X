@@ -77,27 +77,23 @@ void startHookTarget_lxShield(uint8_t* match) {
 }
 
 void startHookTarget_AhnLab(uint8_t* match) {
-
 	hook_memory(match, RET, sizeof(RET));
-
 }
 
 void startHookTarget_AhnLab2(uint8_t* match) {
-
 	hook_memory(match - 0x10, RET, sizeof(RET));
-
 }
 
 void startHookTarget_AhnLab3(uint8_t* match) {
-
 	hook_memory(match - 0x8, RET, sizeof(RET));
-
 }
 
 void startHookTarget_AhnLab4(uint8_t* match) {
-
 	hook_memory(match - 0x10, RET, sizeof(RET));
+}
 
+void startHookTarget_AhnLab5(uint8_t* match) {
+	hook_memory(match - 0x1C, RET, sizeof(RET));
 }
 
 void startHookTarget_AppSolid(uint8_t* match) {
