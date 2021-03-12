@@ -16,6 +16,10 @@
 }
 @end
 
+uint8_t NOP[] = {
+	0x1F, 0x20, 0x03, 0xD5  //NOP
+};
+
 uint8_t RET[] = {
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
@@ -150,6 +154,11 @@ void startPatchTarget_HanaBank(uint8_t* match) {
 
 void startPatchTarget_Yoti(uint8_t* match) {
 	hook_memory(match - 0x60, RET0, sizeof(RET0));
+}
+
+void startPatchTarget_SaidaBank(uint8_t* match) {
+	// NSLog(@"[FlyJB] Found SaidaBank AhnLab: %p", match - _dyld_get_image_vmaddr_slide(0));
+	hook_memory(match + 0x4, NOP, sizeof(NOP));
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {

@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "[FlyJB X] Removing old files..."
+if [[ -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist" ]]; then
+	rm -f "/private/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist" &> /dev/null
+else
+	echo "[FlyJB X] Couldn't find kr.xsf1re.flyjb_crashfix.plist"
+fi
+
+echo "[FlyJB X] Done."

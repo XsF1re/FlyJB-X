@@ -14,3 +14,4 @@ void loadMiniStockMemHooks();
 void loadixGuardMemPatches();
 void loadHanaBankMemPatches();
 void loadYotiMemPatches();
+void loadSaidaBankMemPatches();

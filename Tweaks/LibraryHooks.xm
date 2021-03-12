@@ -259,28 +259,6 @@ static JobBase* sharedInstanceJB = nil;
 %end
 
 //AhnLab
-//SBI저축은행
-%hook TypesCanoni
--(int)a3142:(id)arg1 {
-	return 200;
-}
-
--(int)timestamp {
-	return 0;
-}
-%end
-
-%hook THREAD_POLI
--(int)a3142:(id)arg1 {
-	return 200;
-}
-
--(int)timestamp {
-	return 0;
-}
-%end
-//SBI저축은행 끝
-
 %hook AMSLContaminationInspector
 +(id)sharedInstance {
 	return nil;

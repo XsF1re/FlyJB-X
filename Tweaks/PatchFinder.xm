@@ -440,3 +440,23 @@ void loadYotiMemPatches() {
 
 	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_Yoti);
 }
+
+void loadSaidaBankMemPatches() {
+	// your time is over
+	// say hello to this guy
+	const uint64_t target[] = {
+		//ADRP            X8, #selRef_timestamp@PAGE
+		//...
+		0xF103221F,	// CMP w[16-31], #200
+		0x540008E1,	// B.NE #0x11c
+		0x94000000,	// BL
+	};
+
+	const uint64_t mask[] = {
+		0xFFFFFE1F,
+		0xFFFFFFFF,
+		0xFC000000
+	};
+
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_SaidaBank);
+}

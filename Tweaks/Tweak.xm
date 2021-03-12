@@ -107,6 +107,11 @@
 					return;
 			}
 
+			//AhnLab 무작위 클래스 - 사이다뱅크
+			if([bundleID isEqualToString:@"com.sbi.saidabank"]) {
+					loadSaidaBankMemPatches();
+			}
+
 			if([bundleID isEqualToString:@"com.kbstar.kbbank"])
 				loadNoSafeMode();
 
