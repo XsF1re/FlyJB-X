@@ -68,7 +68,6 @@
 	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
 	BOOL isLibHooker = [[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"];
 	BOOL DobbyHook = [prefs[@"enableDobby"] boolValue];
-	BOOL tossHasOldClass = true;
 	setTossPatched(false);
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
@@ -93,8 +92,9 @@
 			if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 				Class oldClass = objc_getClass("StockNewsdmManager");
 				if(!oldClass) {
-					tossHasOldClass = false;
 					loadixGuardMemPatches();
+					if(!isTossPatched())
+						showAlertBypassFailedToss();
 					return;	//앱 성능 저하 방지
 				}
 			}
@@ -234,18 +234,30 @@
 			if([bundleID isEqualToString:@"com.truefriend.ministock"])
 				loadMiniStockMemHooks();
 
-//NSHC lxShield - 가디언테일즈
-			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"])
-				loadlxShieldMemHooks();
 
-//NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사
-			if([bundleID isEqualToString:@"com.sktelecom.tauth"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"] || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
-				loadlxShieldMemHooks4();//loadlxShieldMemHooks2();
+//NSHC lxShield v1 - 가디언테일즈
+//NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사, LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet, Syrup Wallet, 한투S smart, SK증권 주파수3.0
+				NSArray *lxShieldApps = [NSArray arrayWithObjects:
+																	@"com.kakaogames.gdtskr",
+																	@"com.sktelecom.tauth",
+																	@"com.hyundaicard.hcappcard",
+																	@"com.kakaogames.moonlight",
+																	@"com.lotte.mybee.lpay",
+																	@"com.lottecard.LotteMembers",
+																	@"com.KoreaExpressSmt",
+																	@"com.hyundaicapital.myAccount",
+																	@"com.BNSWorks.iTSmartWallet",
+																	@"com.kisb.smartKISB",
+																	@"kr.co.sks.joopasoo",
+																	nil
+																	];
 
-//NSHC lxShield v3 - LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet, Syrup Wallet, 한투S smart
-			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"] || [bundleID isEqualToString:@"com.KoreaExpressSmt"]
-				|| [bundleID isEqualToString:@"com.hyundaicapital.myAccount"] || [bundleID isEqualToString:@"com.BNSWorks.iTSmartWallet"] || [bundleID isEqualToString:@"com.kisb.smartKISB"])
-				loadlxShieldMemHooks4();//loadlxShieldMemHooks3();
+			for(NSString* app in lxShieldApps) {
+				if([bundleID isEqualToString:app]) {
+					loadlxShieldMemHooks();
+					break;
+				}
+			}
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 미래에셋생명 모바일창구
 			NSArray *mVaccineApps = [NSArray arrayWithObjects:
@@ -258,8 +270,8 @@
 				if([bundleID isEqualToString:app]) {
 						//Disabled DobbyHook...
 						loadSVC80MemPatch();
+						break;
 					}
-					break;
 				}
 
 //Arxan? - Yoti
@@ -342,11 +354,8 @@
 		}
 	}
 
-	//토스 탈옥감지 확인
+	//스틸리언 토스 탈옥감지 확인
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		loadCheckHooks();
-		if(!tossHasOldClass && !isTossPatched()) {
-			showAlertBypassFailedToss();
-		}
 	}
 }

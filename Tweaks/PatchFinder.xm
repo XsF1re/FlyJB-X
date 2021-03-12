@@ -217,45 +217,20 @@ int kakaoBankPatch() {
 
 void loadlxShieldMemHooks() {
 
-	const uint8_t target[] = {
+	const uint8_t target[] = {	//v1
 		0xFD, 0x83, 0x01, 0x91,
 		0xFF, 0x03, 0x15, 0xD1,
 		0xA8, 0x43, 0x08, 0xD1
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
 
-}
-
-void loadlxShieldMemHooks2() {
-
-	const uint8_t target[] = {
-		0xFD, 0x83, 0x01, 0x91,
-		0xFF, 0x43, 0x13, 0xD1,
-		0xA8, 0x43, 0x08, 0xD1
-	};
-	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
-
-}
-
-
-void loadlxShieldMemHooks3() {
-
-	const uint8_t target[] = {
-		0xFD, 0x83, 0x01, 0x91,
-		0xFF, 0x03, 0x16, 0xD1,
-		0xA8, 0x83, 0x08, 0xD1
-	};
-	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
-
-}
-
-void loadlxShieldMemHooks4() {
-	const uint8_t target[] = {
+	const uint8_t target2[] = {	//v2 ~ v4
 		0x00, 0x40, 0x62, 0x1E,
 		0x00, 0x20, 0x28, 0x1E,
 		0xE8, 0x57, 0x9F, 0x1A
 	};
-	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
+	scan_executable_memory(target2, sizeof(target2), &startHookTarget_lxShield);
+
 }
 
 void loadAhnLabMemHooks() {
@@ -410,9 +385,6 @@ void loadMiniStockMemHooks() {
 
 void loadixGuardMemPatches() {
 	const uint64_t target[] = {
-		0x90000000, // ADRP
-		0x90000000, // ADRP
-		0x91000000, // ADD Xn, Xn, #imm
 		0x7100041F, // CMP wN, #1
 		0xF9000000,	// STR x*, [x*]
 		0x540000A1,	// B.NE #0x14
@@ -420,9 +392,6 @@ void loadixGuardMemPatches() {
 	};
 
 	const uint64_t mask[] = {
-		0x9F000000,
-		0x9F000000,
-		0xFF000000,
 		0xFFFFFC1F,
 		0xFF000000,
 		0xFFFFFFFF,
