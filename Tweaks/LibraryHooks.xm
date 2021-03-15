@@ -3,11 +3,6 @@
 #import "../Headers/AeonLucid.h"
 #import <UIKit/UIKit.h>
 
-@interface JobBase : NSObject
-+(id)sharedInstance;
-+(void)notifyJobFinished:(int)arg1;
-@end
-
 %group LibraryHooks
 // %hook TAUtil
 // +(id)getCarrierCode {
@@ -171,43 +166,6 @@
 
 -(BOOL)mvc {
 	return false;
-}
-%end
-
-//NSHC - 한국투자증권(계좌개설포힘)
-// Get the instance of a class
-// https://www.reddit.com/r/jailbreakdevelopers/comments/2rgjce/get_the_instance_of_a_class/
-static JobBase* sharedInstanceJB = nil;
-%hook JobBase
--(id)init {
-	id orig = %orig;
-  sharedInstanceJB = orig;
-	return orig;
-}
-
-%new
-+(id)sharedInstance{
-  return sharedInstanceJB;
-}
-%end
-
-%hook JobCodeGuard
--(void)onBegin {
-	[[%c(JobBase) sharedInstance] notifyJobFinished:0];
-}
-%end
-
-//NSHC ixShield EORMOVSVC - IBK투자증권
-%hook External
--(void)sysCheckStart_ix:(id)arg1 {
-	;
-}
-%end
-
-//NSHC ixShield EORMOVSVC - 한화손해보험
-%hook AppDelegate
--(void) checkNSHC {
-	;
 }
 %end
 

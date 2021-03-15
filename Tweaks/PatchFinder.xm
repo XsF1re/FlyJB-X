@@ -460,3 +460,39 @@ void loadSaidaBankMemPatches() {
 
 	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_SaidaBank);
 }
+
+void loadixShieldMemHooks() {
+	const uint64_t ix_sysCheckStart_target[] = {
+		0x37000AAA,	// TBNZ w10, #0, #0x154
+		0x4A090108,	// EOR w8, w8, w9
+		0x37000A68	// TBNZ w8, #0, #0x154
+	};
+
+	const uint64_t ix_sysCheckStart_mask[] = {
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF
+	};
+
+	scan_executable_memory_with_mask(ix_sysCheckStart_target, ix_sysCheckStart_mask, sizeof(ix_sysCheckStart_target)/sizeof(uint64_t), &startHookTarget_ixShield);
+
+	const uint64_t ix_sysCheck_gamehack_target[] = {
+		0x71000D1F,	// CMP w8, #3
+		0x1A9F27E8,	// CSET W8, CC
+		0x90000000, // ADRP
+		0x39000000, // STRB w*, [x*] //LDRB
+		0x7100013F,	// CMP w9, #0
+		0x1A9F17E9	// CSET w9, EQ
+	};
+
+	const uint64_t ix_sysCheck_gamehack_mask[] = {
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0x9F000000,
+		0xFF000000,
+		0xFFFFFFFF,
+		0xFFFFFFFF
+	};
+
+	scan_executable_memory_with_mask(ix_sysCheck_gamehack_target, ix_sysCheck_gamehack_mask, sizeof(ix_sysCheck_gamehack_target)/sizeof(uint64_t), &startHookTarget_ixShield2);
+}

@@ -15,3 +15,4 @@ void loadixGuardMemPatches();
 void loadHanaBankMemPatches();
 void loadYotiMemPatches();
 void loadSaidaBankMemPatches();
+void loadixShieldMemHooks();

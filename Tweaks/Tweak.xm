@@ -203,10 +203,12 @@
 																nil
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
+//NSHCAppsV2(EORMOVSVC): IBK투자증권, KT멤버쉽, 미니스탁, 한국투자(계좌개설겸용), 헌화손해보험
 
 //NSHC 블랙리스트: 빗썸, NSHC와 스틸리언 솔루션 둘다 적용된 앱
 			for(NSString* app in NSHCApps) {
 				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"] && !(stealienExist && stealienExist2 && NSHCExist))) {
+					loadixShieldMemHooks();
 					loadSVC80MemPatch();
 					break;
 				}
@@ -234,10 +236,6 @@
 					break;
 				}
 			}
-
-//NSHC - 미니스탁
-			if([bundleID isEqualToString:@"com.truefriend.ministock"])
-				loadMiniStockMemHooks();
 
 
 //NSHC lxShield v1 - 가디언테일즈

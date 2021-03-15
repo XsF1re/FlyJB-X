@@ -16,6 +16,17 @@
 }
 @end
 
+struct ix_detected_pattern {
+    char resultCode[12];
+    char object[128];
+    char description[128];
+};
+
+struct ix_detected_pattern_list_gamehack {
+    struct ix_detected_pattern *pattern;
+    int listCount;
+};
+
 uint8_t NOP[] = {
 	0x1F, 0x20, 0x03, 0xD5  //NOP
 };
@@ -56,6 +67,33 @@ uint8_t SYSAccessNOPBlock[] = {
 	0x1F, 0x20, 0x03, 0xD5,  //NOP
 	0x40, 0x00, 0x80, 0x52  //MOV X0, #2
 };
+
+int (*orig_ix_sysCheckStart)(struct ix_detected_pattern **p_info);
+int hook_ix_sysCheckStart(struct ix_detected_pattern **p_info)
+{
+	struct ix_detected_pattern *patternInfo = (struct ix_detected_pattern*)malloc(sizeof(struct ix_detected_pattern));
+	strcpy(patternInfo->resultCode, "0000");
+	strcpy(patternInfo->object, "SYSTEM_OK");
+	strcpy(patternInfo->description, "SYSTEM_OK");
+	*p_info = patternInfo;
+	return 1;
+}
+
+int (*orig_ix_sysCheck_gamehack)(struct ix_detected_pattern **p_info, struct ix_detected_pattern_list_gamehack **p_list_gamehack);
+int hook_ix_sysCheck_gamehack(struct ix_detected_pattern **p_info, struct ix_detected_pattern_list_gamehack **p_list_gamehack) {
+	struct ix_detected_pattern *patternInfo = (struct ix_detected_pattern*)malloc(sizeof(struct ix_detected_pattern));
+  struct ix_detected_pattern_list_gamehack *patternList = (struct ix_detected_pattern_list_gamehack*)malloc(sizeof(struct ix_detected_pattern_list_gamehack));
+
+	strcpy(patternInfo->resultCode, "0000");
+	strcpy(patternInfo->object, "SYSTEM_OK");
+	strcpy(patternInfo->description, "SYSTEM_OK");
+	patternList->listCount = 0;
+
+	*p_info = patternInfo;
+	*p_list_gamehack = patternList;
+
+	return 1;
+}
 
 void (*orig_subroutine)(void);
 void nothing(void)
@@ -157,8 +195,19 @@ void startPatchTarget_Yoti(uint8_t* match) {
 }
 
 void startPatchTarget_SaidaBank(uint8_t* match) {
-	// NSLog(@"[FlyJB] Found SaidaBank AhnLab: %p", match - _dyld_get_image_vmaddr_slide(0));
 	hook_memory(match + 0x4, NOP, sizeof(NOP));
+}
+
+void startHookTarget_ixShield(uint8_t* match) {
+	uint8_t *func = find_start_of_function(match);
+	// NSLog(@"[FlyJB] Found ixShield_sysCheckStart: %p, match: %p", func - _dyld_get_image_vmaddr_slide(0), match - _dyld_get_image_vmaddr_slide(0));
+	MSHookFunction((void *)(func), (void *)hook_ix_sysCheckStart, (void **)&orig_ix_sysCheckStart);
+}
+
+void startHookTarget_ixShield2(uint8_t* match) {
+	uint8_t *func = find_start_of_function(match);
+	// NSLog(@"[FlyJB] Found ixShield_sysCheck_gamehack: %p, match: %p", func - _dyld_get_image_vmaddr_slide(0), match - _dyld_get_image_vmaddr_slide(0));
+	MSHookFunction((void *)(func), (void *)hook_ix_sysCheck_gamehack, (void **)&orig_ix_sysCheck_gamehack);
 }
 
 void startPatchTarget_SYSAccess(uint8_t* match) {
@@ -339,8 +388,6 @@ void loadSVC80ExitMemHooks() {
 void loadFJMemoryHooks() {
 
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
-	// loadSVC80MemHooks();
-	// NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
 	bundlePath = [bundlePath stringByAppendingString:@"/Info.plist"];
 	NSMutableDictionary *infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:bundlePath];
