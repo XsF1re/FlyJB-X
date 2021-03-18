@@ -3,12 +3,16 @@
 #import "../Headers/AeonLucid.h"
 #import <UIKit/UIKit.h>
 
+@interface NSDistributedNotificationCenter : NSNotificationCenter
+@end
+
 %group LibraryHooks
 // %hook TAUtil
 // +(id)getCarrierCode {
 // 	return @"1";
 // }
 // %end
+
 //LiApp - Don't block device.
 %hook w0n6Y
 -(id)u0tutZS {
@@ -16,6 +20,16 @@
 	NSString *str = [[NSUUID UUID] UUIDString];
 	// NSLog(@"[FlyJB] u0tutZS: %@ -> %@", orig, str);
 	return str;
+}
+%end
+
+//티머니페이 - Do you block account? don't do that like Toss. please.
+%hook IntroVC
+-(void)sanneRequest:(id)arg1 errCd:(id)arg2 errDtlCtt:(id)arg3 {
+	NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+	[userInfo setObject:@"bypassFailedTmoneyPay" forKey:@"terminateReason"];
+	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"kr.xsf1re.flyjbcenter" object:nil userInfo:userInfo];
+	exit(0);
 }
 %end
 

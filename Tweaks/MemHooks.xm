@@ -237,25 +237,25 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 		NSString* path2 = [NSString stringWithUTF8String:path];
 		if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
 			*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";
-			// NSLog(@"[FlyJB] Bypassed SVC #0x80 - num: %d, path: %s", syscall_num, path);
+			NSLog(@"[FlyJB] Bypassed SVC #0x80 - num: %d, path: %s", syscall_num, path);
 		}
-		// else {
-			// NSLog(@"[FlyJB] Detected SVC #0x80 - num: %d, path: %s", syscall_num, path);
-		// }
+		else {
+			NSLog(@"[FlyJB] Detected SVC #0x80 - num: %d, path: %s", syscall_num, path);
+		}
 	}
 
-	// else if(syscall_num == SYS_syscall) {
-		// int x0 = (int)(uint64_t)reg_ctx->general.regs.x0;
-		// NSLog(@"[FlyJB] Detected syscall of SVC #0x80 number: %d", x0);
-	// }
+	else if(syscall_num == SYS_syscall) {
+		int x0 = (int)(uint64_t)reg_ctx->general.regs.x0;
+		NSLog(@"[FlyJB] Detected syscall of SVC #0x80 number: %d", x0);
+	}
 
-	// else if(syscall_num == SYS_exit) {
-		// NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
-	// }
+	else if(syscall_num == SYS_exit) {
+		NSLog(@"[FlyJB] Detected SVC #0x80 Exit call stack: \n%@", [NSThread callStackSymbols]);
+	}
 
-	// else {
-		// NSLog(@"[FlyJB] Detected Unknown SVC #0x80 number: %d", syscall_num);
-	// }
+	else {
+		NSLog(@"[FlyJB] Detected Unknown SVC #0x80 number: %d", syscall_num);
+	}
 
 }
 

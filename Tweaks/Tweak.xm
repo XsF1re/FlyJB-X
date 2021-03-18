@@ -10,6 +10,7 @@
 #import "../Headers/MemHooks.h"
 #import "../Headers/CheckHooks.h"
 #import "../Headers/PatchFinder.h"
+#import "../Headers/Foreign/Foreign.h"
 #import "../ImportHooker/ImportHooker.h"
 #import <AppSupport/CPDistributedMessagingCenter.h>
 #import <spawn.h>
@@ -53,16 +54,21 @@
 		                          [alert dismissViewControllerAnimated:YES completion:nil];
 				  }]];
 		[self presentViewController:alert animated:true completion:nil];
-	}
+		}
+		else if([[notification.userInfo objectForKey:@"terminateReason"] isEqualToString:@"bypassFailedTmoneyPay"]) {
+			UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"FlyJB X" message:@"티머니페이 계정이 정지될 위험한 상황으로부터 보호되었습니다.\n\n티머니페이 탈옥감지를 우회하는데 실패한 것으로 판단되어 앱을 강제 종료하였습니다." preferredStyle: UIAlertControllerStyleAlert];
+			[alert addAction:[UIAlertAction actionWithTitle:@"확인" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+			                          [alert dismissViewControllerAnimated:YES completion:nil];
+					  }]];
+			[self presentViewController:alert animated:true completion:nil];
+		}
 }];
 }
 %end
 %end
 
 %ctor{
-
-	NSLog(@"[FlyJB] Loaded!!!");
-
+	
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
@@ -88,7 +94,7 @@
 		   || ([bundleID hasPrefix:@"com.lguplus.mobile.cs"] && [prefs[@"com.lguplus.mobile.cs"] boolValue]))
 		{
 
-			//iXGuard - 토스 v4.993.0+, TrueMoney Wallet
+			//iXGuard - 토스 v4.993.0+
 			if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 				Class oldClass = objc_getClass("StockNewsdmManager");
 				if(!oldClass) {
@@ -99,6 +105,9 @@
 				}
 			}
 			openDobby();
+
+			// Support Foreign Apps..
+			loadForeignBypass();
 
 			//	Only work with SVC80MemHooks
 			//	Arxan - 하나금융투자 프로

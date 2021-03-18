@@ -519,6 +519,11 @@
                              @"/Applications/goblin.app/Applications/blackra1n.app",
                              @"/Applications/Cycorder.app",
                              @"/Applications/Loader.app",
+                             @"/usr/lib/pangu_xpcd.dylib",
+                             @"/xuanyuansword.installed",
+                             @"/Applications/checkra1n.app",
+                             @"/var/log/jailbreakd-stderr.log",
+                             @"/var/tmp/slide.txt",
                              nil
                             ];
 }
