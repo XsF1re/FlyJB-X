@@ -45,6 +45,10 @@ uint8_t RET1[] = {
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
 
+uint8_t MOV_X0_1[] = {
+	0x20, 0x00, 0x80, 0xD2	//MOV X0, #1
+};
+
 uint8_t KJP[] = {
 	0x1F, 0x20, 0x03, 0xD5,	//NOP
 	0x09, 0x00, 0x00, 0x14	//B #0x24
@@ -166,6 +170,10 @@ void startPatchTarget_nProtect2(uint8_t* match) {
 
 void startPatchTarget_MiniStock(uint8_t* match) {
 	hook_memory(match - 0x1C, RET1, sizeof(RET1));
+}
+
+void startPatchTarget_MyGenesis(uint8_t* match) {
+	hook_memory(match + 0xC, MOV_X0_1, sizeof(MOV_X0_1));
 }
 
 static bool tossPatched = false;
@@ -436,6 +444,38 @@ void loadFJMemoryHooks() {
 	}
 
 }
+
+// ====== Framework SVC80MemHooks ====== //
+void loadSVC80FWMemHooks() {
+	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
+	NSString *fwName;
+	if([bundleID isEqualToString:@"com.tmoney.tmpay"]) {
+		fwName = @"MpaFramework";
+	}
+
+	int imageIndex = 0;
+	uint32_t count = _dyld_image_count();
+	for(uint32_t i = 0; i < count; i++)
+	{
+		const char *dyld = _dyld_get_image_name(i);
+		NSString *nsdyld = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dyld length:strlen(dyld)];
+		if([nsdyld hasSuffix:fwName]) {
+			NSLog(@"[FlyJB] Found fwName: %@, imageIndex: %d", nsdyld, i);
+			imageIndex = i;
+			scan_executable_memory_with_image_index(SYSAccessBlock, sizeof(SYSAccessBlock), &startPatchTarget_SYSAccess, imageIndex);
+			MSImageRef image = MSGetImageByName([nsdyld UTF8String]);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck14detect_rootingEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck15detect_debuggerEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck19detect_modificationEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck16detect_substrateEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck17detect_custom_romEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13SecurityCheck15detect_emulatorEv"), (void *)ret_0, (void **)&orig_int);
+			MSHookFunction(MSFindSymbol(image, "__ZN9cbpp_core13MpaSdkManager22notify_security_detectENS_21SecurityDetectionTypeE"), (void *)ret_0, (void **)&orig_int);
+			break;
+		}
+	}
+}
+
 
 // ====== 하나멤버스 무결성 복구 ====== //
 %group FJMemoryIntegrityRecoverHMS

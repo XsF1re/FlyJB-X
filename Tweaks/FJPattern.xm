@@ -524,6 +524,7 @@
                              @"/Applications/checkra1n.app",
                              @"/var/log/jailbreakd-stderr.log",
                              @"/var/tmp/slide.txt",
+                             @"/Library/PreferenceBundles/HideJBSettings.bundle",
                              nil
                             ];
 }

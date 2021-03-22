@@ -10,6 +10,7 @@ void loadSVC80OpenMemHooks();
 void loadSVC80AccessMemHooks();
 void loadSVC80ExitMemHooks();
 void loadOpendirMemHooks();
+void loadSVC80FWMemHooks();
 void startHookTarget_lxShield(uint8_t* match);
 void startHookTarget_AhnLab(uint8_t* match);
 void startHookTarget_AhnLab2(uint8_t* match);
@@ -31,6 +32,7 @@ void startPatchTarget_Yoti(uint8_t* match);
 void startPatchTarget_SaidaBank(uint8_t* match);
 void startHookTarget_ixShield(uint8_t* match);
 void startHookTarget_ixShield2(uint8_t* match);
+void startPatchTarget_MyGenesis(uint8_t* match);
 void setTossPatched(bool isPatched);
 bool isTossPatched();
 

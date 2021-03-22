@@ -386,7 +386,9 @@ static const char* hook__dyld_get_image_name(uint32_t image_index) {
 				[lower rangeOfString:@"checkra1n"].location != NSNotFound ||
 				[lower rangeOfString:@"frida"].location != NSNotFound ||
 				[lower rangeOfString:@"sslkillswitch2"].location != NSNotFound ||
-				[lower rangeOfString:@"applist"].location != NSNotFound) {
+				[lower rangeOfString:@"applist"].location != NSNotFound ||
+				[lower rangeOfString:@"abypass"].location != NSNotFound ||
+				[lower rangeOfString:@"hidejb"].location != NSNotFound) {
 			//NSLog(@"[FlyJB] Bypassed SysHooks2 _dyld_get_image_name : %s", ret);
 			return "/dyld.bypass";
 		}
@@ -460,7 +462,9 @@ void syncDyldArray() {
 				[lower rangeOfString:@"checkra1n"].location != NSNotFound ||
 				[lower rangeOfString:@"frida"].location != NSNotFound ||
 				[lower rangeOfString:@"sslkillswitch2"].location != NSNotFound ||
-				[lower rangeOfString:@"applist"].location != NSNotFound) {
+				[lower rangeOfString:@"applist"].location != NSNotFound ||
+				[lower rangeOfString:@"abypass"].location != NSNotFound ||
+				[lower rangeOfString:@"hidejb"].location != NSNotFound) {
 			//NSLog(@"[FlyJB] BYPASSED dyld = %@", name);
 			continue;
 		}

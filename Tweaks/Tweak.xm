@@ -68,7 +68,7 @@
 %end
 
 %ctor{
-	
+
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
@@ -109,6 +109,13 @@
 			// Support Foreign Apps..
 			loadForeignBypass();
 
+			//TmoneyPay = Arxan + NSHC + Stealien...
+			if([bundleID isEqualToString:@"com.tmoney.tmpay"]) {
+				loadSVC80AccessMemHooks();
+				loadSVC80OpenMemHooks();
+				loadSVC80FWMemHooks();
+			}
+
 			//	Only work with SVC80MemHooks
 			//	Arxan - 하나금융투자 프로
 			if([bundleID isEqualToString:@"com.hanasec.stock"]) {
@@ -121,13 +128,23 @@
 					loadSaidaBankMemPatches();
 			}
 
+			//광주은행
+			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
+					loadKJBankMemHooks();
+
+			//My GENESIS
+			if([bundleID isEqualToString:@"com.genesis.apps"])
+					loadMyGenesisMemPatches();
+
+			if([bundleID isEqualToString:@"com.kebhana.hanapush"])
+				loadHanaBankMemPatches();
+
 			if([bundleID isEqualToString:@"com.kbstar.kbbank"])
 				loadNoSafeMode();
 
 			loadFJMemoryHooks();
 
-			if([bundleID isEqualToString:@"com.kebhana.hanapush"])
-				loadHanaBankMemPatches();
+
 
 //Arxan 메모리 패치
 			if([bundleID isEqualToString:@"com.hana.hanamembers"] || [bundleID isEqualToString:@"com.lottecard.mobilepay"])
@@ -177,11 +194,7 @@
 				}
 			}
 
-//광주은행
-			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
-				loadKJBankMemHooks();
-
-//따로 제작? 불명 - AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드), NH 투자증권 QV
+//따로 제작? 불명 - AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드), NH 투자증권 QV,
 			NSArray *UnkApps = [NSArray arrayWithObjects:
 																@"com.epost.psf.sd",
 																@"org.kftc.fido.lnk.lnkApp",
@@ -223,9 +236,8 @@
 				}
 			}
 
-//SVC탐지 + 스틸리언: 티머니 관련 4종, 유안타증권, 키위뱅크(KB저축은행)
+//SVC탐지 + 스틸리언: 티머니 관련 3종, 유안타증권, 키위뱅크(KB저축은행)
 			NSArray *SVCWithStealienApps = [NSArray arrayWithObjects:
-																@"com.tmoney.tmpay",
 																@"com.kscc.t-gift",
 																@"kr.co.ondataxi.passenger",
 																@"kr.co.tmoney.tia",
@@ -300,9 +312,6 @@
 			for(NSString* app in ArxanApps) {
 				if([bundleID isEqualToString:app]) {
 					if(DobbyHook) {
-						if(isSubstitute || isLibHooker)
-							loadSVC80MemHooks();
-						else
 							loadSVC80AccessMemHooks();
 					}
 					else {

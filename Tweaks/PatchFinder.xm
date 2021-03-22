@@ -496,3 +496,20 @@ void loadixShieldMemHooks() {
 
 	scan_executable_memory_with_mask(ix_sysCheck_gamehack_target, ix_sysCheck_gamehack_mask, sizeof(ix_sysCheck_gamehack_target)/sizeof(uint64_t), &startHookTarget_ixShield2);
 }
+
+void loadMyGenesisMemPatches() {
+	const uint64_t target[] = {
+		//MOV X0, X0
+		0xD28000B0,	// MOV X16, #5
+		0xD4001001,	// SVC #0x80
+		0x54000063,	// B.LO #0xC
+	};
+
+	const uint64_t mask[] = {
+		0xFFFFFFFF,
+		0xFFFFFFFF,
+		0xFFFFFFFF
+	};
+
+	scan_executable_memory_with_mask(target, mask, sizeof(target)/sizeof(uint64_t), &startPatchTarget_MyGenesis);
+}

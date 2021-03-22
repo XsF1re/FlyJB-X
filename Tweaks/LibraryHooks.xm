@@ -23,7 +23,7 @@
 }
 %end
 
-//티머니페이 - Do you block account? don't do that like Toss. please.
+// 티머니페이 - Do you block account? don't do that like Toss. please.
 %hook IntroVC
 -(void)sanneRequest:(id)arg1 errCd:(id)arg2 errDtlCtt:(id)arg3 {
 	NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];

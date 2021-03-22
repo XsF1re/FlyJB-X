@@ -16,3 +16,4 @@ void loadHanaBankMemPatches();
 void loadYotiMemPatches();
 void loadSaidaBankMemPatches();
 void loadixShieldMemHooks();
+void loadMyGenesisMemPatches();
