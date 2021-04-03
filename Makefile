@@ -12,6 +12,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = FlyJBX
 $(TWEAK_NAME)_FILES = fishhook/fishhook.c Tweaks/FJPattern.xm Tweaks/Tweak.xm Tweaks/LibraryHooks.xm Tweaks/ObjCHooks.xm Tweaks/OptimizeDisableInjector.xm Tweaks/SysHooks.xm Tweaks/NoSafeMode.xm Tweaks/MemHooks.xm Tweaks/CheckHooks.xm Tweaks/PatchFinder.xm Tweaks/AeonLucid.xm ImportHooker/ImportHooker.c Tweaks/Foreign/Foreign.xm Tweaks/Foreign/MemHooks.xm Tweaks/Foreign/PatchFinder.xm
 $(TWEAK_NAME)_CFLAGS = -fobjc-arc
+$(TWEAK_NAME)_WEAK_LIBRARIES = $(THEOS_LIBRARY_PATH)/libhooker.dylib
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 before-package::
