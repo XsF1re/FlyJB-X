@@ -2,6 +2,7 @@
 #import "../Headers/FJPattern.h"
 #import "../fishhook/fishhook.h"
 #import "../Headers/dobby.h"
+#import "../Headers/SVC_Caller.h"
 #import "../libhooker/libhooker.h"
 #include <sys/utsname.h>
 #include <sys/stat.h>
@@ -397,9 +398,7 @@ static const char* hook__dyld_get_image_name(uint32_t image_index) {
 	//NSLog(@"[FlyJB] Detected SysHooks2 _dyld_get_image_name : %s", ret);
 	return ret;
 }
-%end
 
-%group SysHooks3
 static char* (*orig_getenv)(const char* name);
 static char* hook_getenv(const char* name){
 	if(name) {
@@ -476,7 +475,7 @@ void syncDyldArray() {
 	dyldCount = counter;
 }
 
-%group SysHooks4
+%group DyldHooks
 // static char* (*orig_strstr)(const char* s1, const char* s2);
 // static char* hook_strstr(const char* s1, const char* s2) {
 //   if(strcmp(s2, "/Library/MobileSubstrate/") == 0
@@ -638,7 +637,7 @@ static DIR *hook_opendir(const char *pathname) {
 void loadSysHooks() {
 	%init(SysHooks);
 
-	if (access("/usr/lib/libhooker.dylib", F_OK) == 0) {
+	if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
 		const struct LHFunctionHook hooks[10] = {
 			{(void*)dladdr, (void*)hook_dladdr, (void**)&orig_dladdr},
 			{(void*)uname, (void*)hook_uname, (void**)&orig_uname},
@@ -675,8 +674,8 @@ void loadSysHooks() {
 void loadSysHooks2() {
 	%init(SysHooks2);
 
-	if (access("/usr/lib/libhooker.dylib", F_OK) == 0) {
-		const struct LHFunctionHook hooks[9] = {
+	if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
+		const struct LHFunctionHook hooks[10] = {
 			{(void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname},
 			{(void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs},
 			{(void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf},
@@ -685,9 +684,10 @@ void loadSysHooks2() {
 			{dlsym((void *)RTLD_DEFAULT, "syscall"),(void*)hook_syscall,(void**)&orig_syscall},
 			{(void*)fork, (void*)hook_fork, (void**)&orig_fork},
 			{(void*)fopen, (void*)hook_fopen, (void**)&orig_fopen},
-			{(void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name}
+			{(void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name},
+			{(void *)getenv, (void *)hook_getenv, (void **)&orig_getenv}
 		};
-		LHHookFunctions(hooks, 9);
+		LHHookFunctions(hooks, 10);
 	}
 	else {
 		MSHookFunction((void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname);
@@ -699,28 +699,46 @@ void loadSysHooks2() {
 		MSHookFunction((void*)fork, (void*)hook_fork, (void**)&orig_fork);
 		MSHookFunction((void*)fopen, (void*)hook_fopen, (void**)&orig_fopen);
 		MSHookFunction((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name);
+		MSHookFunction((void *)getenv, (void *)hook_getenv, (void **)&orig_getenv);
 	}
 }
 
-void loadSysHooks3() {
-	%init(SysHooks3);
-	MSHookFunction((void *)getenv, (void *)hook_getenv, (void **)&orig_getenv);
-}
 
-void loadSysHooks4() {
+void loadDyldHooks() {
 	syncDyldArray();
-	%init(SysHooks4);
+	%init(DyldHooks);
 	// MSHookFunction((void *)dlsym(RTLD_DEFAULT, "strstr"), (void *)hook_strstr, (void **)&orig_strstr);
-	MSHookFunction((void *)_dyld_image_count, (void *)hook__dyld_image_count, (void **)&orig__dyld_image_count);
-	MSHookFunction((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name2, (void **)&orig__dyld_get_image_name2);
-	MSHookFunction((void *)_dyld_get_image_header, (void *)hook__dyld_get_image_header, (void **)&orig__dyld_get_image_header);
+
+	if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
+		const struct LHFunctionHook hooks[3] = {
+			{(void*)_dyld_image_count, (void*)hook__dyld_image_count, (void**)&orig__dyld_image_count},
+			{(void*)_dyld_get_image_name, (void*)hook__dyld_get_image_name2, (void**)&orig__dyld_get_image_name2},
+			{(void*)_dyld_get_image_header, (void*)hook__dyld_get_image_header, (void**)&orig__dyld_get_image_header}
+		};
+		LHHookFunctions(hooks, 3);
+	}
+	else {
+		MSHookFunction((void *)_dyld_image_count, (void *)hook__dyld_image_count, (void **)&orig__dyld_image_count);
+		MSHookFunction((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name2, (void **)&orig__dyld_get_image_name2);
+		MSHookFunction((void *)_dyld_get_image_header, (void *)hook__dyld_get_image_header, (void **)&orig__dyld_get_image_header);
+	}
 }
 
 void loadSysHooksForLiApp() {
 	%init(loadSysHooksForLiApp);
 	// MSHookFunction((void*)connect,(void*)hook_connect,(void**)&orig_connect);
-	MSHookFunction((void*)task_info,(void*)hook_task_info,(void**)&orig_task_info);
-	MSHookFunction((void*)_dyld_register_func_for_add_image, (void*)hook_dyld_register_func_for_add_image, (void**)&orig_dyld_register_func_for_add_image);
+
+	if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
+		const struct LHFunctionHook hooks[2] = {
+			{(void*)task_info, (void*)hook_task_info, (void**)&orig_task_info},
+			{(void*)_dyld_register_func_for_add_image, (void*)hook_dyld_register_func_for_add_image, (void**)&orig_dyld_register_func_for_add_image}
+		};
+		LHHookFunctions(hooks, 2);
+	}
+	else {
+		MSHookFunction((void*)task_info,(void*)hook_task_info,(void**)&orig_task_info);
+		MSHookFunction((void*)_dyld_register_func_for_add_image, (void*)hook_dyld_register_func_for_add_image, (void**)&orig_dyld_register_func_for_add_image);
+	}
 }
 
 void loadOpendirSysHooks() {

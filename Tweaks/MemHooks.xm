@@ -301,15 +301,12 @@ void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 }
 
 void startHookTarget_SVC80Access(uint8_t* match) {
-
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80Access_handler);
 	dobby_disable_near_branch_trampoline();
-
 }
 
 void loadSVC80AccessMemHooks() {
-
 	const uint8_t target[] = {
 		0x30, 0x04, 0x80, 0xD2, //MOV X16, #21
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80

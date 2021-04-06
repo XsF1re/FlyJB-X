@@ -4,57 +4,6 @@
 static NSError *_error_file_not_found = nil;
 
 %group ObjCHooks
-// %hook NSProcessInfo
-// -(NSDictionary*)environment {
-// 	NSDictionary *orig = %orig;
-// 	NSMutableDictionary *dict = [orig mutableCopy];
-// 	[dict removeObjectForKey:@"DYLD_INSERT_LIBRARIES"];
-// 	return dict;
-// }
-// %end
-
-// %hook UIViewController
-// -(void)setRootViewController:(UIViewController *)arg1 {
-// 	NSLog(@"[FlyJB] UIWindow setRootViewController");
-// 	%orig;
-// }
-// %end
-//
-// %hook ViewHelper
-// +(void)showAlertAndExit:(id)arg1 {
-// 	NSLog(@"[FlyJB] ViewHelper: %@", arg1);
-// 	%orig;
-// }
-// %end
-//
-// %hook UIStoryboard
-// + (UIStoryboard *)storyboardWithName:(NSString *)name bundle:(NSBundle *)storyboardBundleOrNil {
-// 	// if([name isEqualToString:@"LaunchScreen"] && !storyboardBundleOrNil)
-// 	// 	return %orig(@"Main", [NSBundle mainBundle]);
-// 	NSLog(@"[FlyJB] UIStoryboard: %@, storyboardBundleOrNil: %@", name, storyboardBundleOrNil);
-// 	return %orig;
-// }
-//
-// -(id)instantiateInitialViewController {
-// 	id orig = %orig;
-// 	NSLog(@"[FlyJB] UIStoryboard instantiateInitialViewController: %@", orig);
-// 	return orig;
-// }
-// %end
-//
-// %hook UIView
-// +(void)transitionWithView:(id)arg1 duration:(double)arg2 options:(unsigned long long)arg3 animations:(/*^block*/id)arg4 completion:(/*^block*/id)arg5 {
-// 	NSLog(@"[FlyJB] UIView transitionWithView: %@, duration: %f, options: %llu, animations: %@, completion: %@", arg1, arg2, arg3, arg4, arg5);
-// 	%orig;
-// }
-//
-// -(id)window {
-// 	id orig = %orig;
-// 	// NSLog(@"[FlyJB] window: %@", orig);
-// 	return orig;
-// }
-// %end
-
 %hook UIApplication
 -(BOOL)openURL:(NSURL *)url {
 	if([[FJPattern sharedInstance] isURLRestricted:url]) {
@@ -196,13 +145,37 @@ static NSError *_error_file_not_found = nil;
 %end
 %end
 
-%group YogiyoObjCHooks
+%group Yogiyo
 %hook NSUserDefaults
 -(BOOL)boolForKey: (NSString *)defaultName {
 	if([defaultName isEqualToString:@"colorChecker"]) {
 		return NO;
 	}
 	return %orig;
+}
+%end
+%end
+
+
+static int smpayCount = 0;
+%group SmilePay
+%hook UIWindow
+-(void)setRootViewController:(id)arg1 {
+	NSString *currentClass = NSStringFromClass([arg1 class]);
+	// NSLog(@"[FlyJB] UIWindow setRootViewController: arg1: %@", currentClass);
+	if([currentClass isEqualToString:@"UIViewController"]) {
+		if(!smpayCount)
+			return;
+		smpayCount++;
+	}
+	%orig;
+}
+%end
+
+%hook ViewHelper
++(void)showAlertAndExit:(NSString *)arg1 {
+	if([arg1 rangeOfString:@"비정상적으로 접근하여 앱을 종료합니다."].location != NSNotFound)
+		return;
 }
 %end
 %end
@@ -216,5 +189,9 @@ void loadStealienObjCHooks() {
 }
 
 void loadYogiyoObjcHooks() {
-	%init(YogiyoObjCHooks);
+	%init(Yogiyo);
+}
+
+void loadSmilePayObjcHooks() {
+	%init(SmilePay);
 }

@@ -2,8 +2,7 @@
 
 void loadSysHooks();
 void loadSysHooks2();
-void loadSysHooks3();
-void loadSysHooks4();
+void loadDyldHooks();
 void loadSysHooksForLiApp();
 void loadOpendirSysHooks();
 void loadDlsymSysHooks();

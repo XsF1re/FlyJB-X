@@ -104,6 +104,7 @@
 					return;	//앱 성능 저하 방지
 				}
 			}
+
 			openDobby();
 
 			// Support Foreign Apps..
@@ -158,6 +159,7 @@
 			Class AhnLabExist = objc_getClass("AMSLContaminationInspector");
 			if(AhnLabExist && ![bundleID isEqualToString:@"com.samsungpop.ios.masset"])
 				loadAhnLabMemHooks();
+
 //Ahnlab v2? - 오늘의 투자 O2
 			else if([bundleID isEqualToString:@"com.samsungpop.ios.masset"])
 				loadAhnLabMemHooks2();
@@ -172,12 +174,8 @@
 			Class stealienExist2 = objc_getClass("Kartzela");
 
 			if(stealienExist && stealienExist2) {
-				loadSysHooks4();
+				loadDyldHooks();
 			}
-
-//배달요기요앱은 한번 탈옥감지하면 설정파일에 colorChecker key에 TRUE 값이 기록됨.
-			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
-				loadYogiyoObjcHooks();
 
 //AppSolid - 코레일톡, NICE지키미, 나이스아이핀, 한화생명보험월렛
 			NSArray *AppSolidApps = [NSArray arrayWithObjects:
@@ -260,7 +258,7 @@
 
 
 //NSHC lxShield v1 - 가디언테일즈
-//NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사, LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet, Syrup Wallet, 한투S smart, SK증권 주파수3.0
+//NSHC lxShield v2 - SKT PASS, 현대카드, 달빛조각사, LPay, LPoint, CJ대한통운, v4.1 - 현대캐피탈, Syrup Wallet, Syrup Wallet, 한투S smart, SK증권 주파수3.0, 교보생명 스마트 모바일창구, 교보생명 퇴직연금 모바일창구
 				NSArray *lxShieldApps = [NSArray arrayWithObjects:
 																	@"com.kakaogames.gdtskr",
 																	@"com.sktelecom.tauth",
@@ -273,6 +271,8 @@
 																	@"com.BNSWorks.iTSmartWallet",
 																	@"com.kisb.smartKISB",
 																	@"kr.co.sks.joopasoo",
+																	@"co.kr.kyobolife.mobileSmartApp",
+																	@"co.kr.kyobo.mpension",
 																	nil
 																	];
 
@@ -284,43 +284,30 @@
 			}
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 미래에셋생명 모바일창구
-			NSArray *mVaccineApps = [NSArray arrayWithObjects:
-																@"com.bizplay.zeropay",
-																@"com.miraeasset.mobilewindow",
-																nil
-																];
-
-			for(NSString* app in mVaccineApps) {
-				if([bundleID isEqualToString:app]) {
-						//Disabled DobbyHook...
-						loadSVC80MemPatch();
-						break;
-					}
-				}
+			if([bundleID isEqualToString:@"com.bizplay.zeropay"] || [bundleID isEqualToString:@"com.miraeasset.mobilewindow"])
+				loadSVC80MemPatch();
 
 //Arxan? - Yoti
 			if([bundleID isEqualToString:@"com.yoti.mobile.ios.live"])
 				loadYotiMemPatches();
 
-//Arxan - 스마일페이, 페이코
-			NSArray *ArxanApps = [NSArray arrayWithObjects:
-																@"com.mysmilepay.app",
-																@"com.nhnent.TOASTPAY",
-																nil
-																];
-
-			for(NSString* app in ArxanApps) {
-				if([bundleID isEqualToString:app]) {
-					if(DobbyHook) {
-							loadSVC80AccessMemHooks();
-					}
-					else {
-						//Disabled DobbyHook...
-						NSLog(@"[FlyJB] Disabled DobbyHook for Arxan Apps... You must manually patch with FJMemory!!!");
-					}
-					break;
+//Arxan - 페이코
+			if([bundleID isEqualToString:@"com.nhnent.TOASTPAY"]) {
+				if(DobbyHook) {
+						loadSVC80AccessMemHooks();
+				} else {
+					NSLog(@"[FlyJB] Disabled DobbyHook for Arxan Apps... You must manually patch with FJMemory!!!");
 				}
 			}
+
+//Arxan - 스마일페이
+		if([bundleID isEqualToString:@"com.mysmilepay.app"])
+			loadSmilePayObjcHooks();
+
+//배달요기요앱은 한번 탈옥감지하면 설정파일에 colorChecker key에 TRUE 값이 기록됨.
+		if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
+			loadYogiyoObjcHooks();
+
 
 //XignCode - 좀비고
 		if([bundleID isEqualToString:@"net.kernys.aooni"])
@@ -331,7 +318,7 @@
 		if(nProtectExist)
 			loadnProtectMemHooks();
 
-//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 신한카드, 롯데카드 등 Substrate 충돌 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+//하나카드, NEW하나은행, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코, 삼성카드(마이홈) 등 Arxan, 신한카드, 롯데카드, 스마일페이, 페이코 등 Substrate 충돌 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:
 															 @"com.hanaskcard.mobileportal",
 															 @"com.kebhana.hanapush",
@@ -343,10 +330,10 @@
 															 @"com.samsungCard.samsungCard",
 															 @"com.shinhancard.SmartShinhan2",
 															 @"com.lottecard.appcard",
+															 @"com.mysmilepay.app",
+															 @"com.nhnent.TOASTPAY",
 															 nil
 															 ];
-
-		 [blacklistApps addObjectsFromArray: ArxanApps];
 
 		 BOOL enableSysHook = true;
 		 for(NSString* app in blacklistApps) {
@@ -356,10 +343,8 @@
 			 }
 		 }
 
-
 			if(enableSysHook) {
 				loadSysHooks2();
-				loadSysHooks3();
 			}
 
 			//Substitute crash when enabled optimize list
