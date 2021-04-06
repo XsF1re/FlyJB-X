@@ -2,6 +2,7 @@
 #import "../Headers/FJPattern.h"
 #import "../fishhook/fishhook.h"
 #import "../Headers/dobby.h"
+#import "../libhooker/libhooker.h"
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <mach-o/dyld.h>
@@ -636,33 +637,69 @@ static DIR *hook_opendir(const char *pathname) {
 
 void loadSysHooks() {
 	%init(SysHooks);
-	MSHookFunction((void*)dladdr, (void*)hook_dladdr, (void**)&orig_dladdr);
-	MSHookFunction((void*)uname, (void*)hook_uname, (void**)&orig_uname);
-	MSHookFunction((void*)mkdir, (void*)hook_mkdir, (void**)&orig_mkdir);
-	MSHookFunction((void*)rmdir, (void*)hook_rmdir, (void**)&orig_rmdir);
-	MSHookFunction((void*)chdir, (void*)hook_chdir, (void**)&orig_chdir);
-	MSHookFunction((void*)chroot, (void*)hook_chroot, (void**)&orig_chroot);
-	MSHookFunction((void*)access, (void*)hook_access, (void**)&orig_access);
+
+	if (access("/usr/lib/libhooker.dylib", F_OK) == 0) {
+		const struct LHFunctionHook hooks[10] = {
+			{(void*)dladdr, (void*)hook_dladdr, (void**)&orig_dladdr},
+			{(void*)uname, (void*)hook_uname, (void**)&orig_uname},
+			{(void*)mkdir, (void*)hook_mkdir, (void**)&orig_mkdir},
+			{(void*)rmdir, (void*)hook_rmdir, (void**)&orig_rmdir},
+			{(void*)chdir, (void*)hook_chdir, (void**)&orig_chdir},
+			{(void*)chroot, (void*)hook_chroot, (void**)&orig_chroot},
+			{(void*)access, (void*)hook_access, (void**)&orig_access},
+			{(void*)rename, (void*)hook_rename, (void**)&orig_rename},
+			{(void*)lstat, (void*)hook_lstat, (void**)&orig_lstat},
+			{(void*)stat, (void*)hook_stat, (void**)&orig_stat}
+		};
+		LHHookFunctions(hooks, 10);
+	}
+	else {
+		MSHookFunction((void*)dladdr, (void*)hook_dladdr, (void**)&orig_dladdr);
+		MSHookFunction((void*)uname, (void*)hook_uname, (void**)&orig_uname);
+		MSHookFunction((void*)mkdir, (void*)hook_mkdir, (void**)&orig_mkdir);
+		MSHookFunction((void*)rmdir, (void*)hook_rmdir, (void**)&orig_rmdir);
+		MSHookFunction((void*)chdir, (void*)hook_chdir, (void**)&orig_chdir);
+		MSHookFunction((void*)chroot, (void*)hook_chroot, (void**)&orig_chroot);
+		MSHookFunction((void*)access, (void*)hook_access, (void**)&orig_access);
+		MSHookFunction((void*)rename, (void*)hook_rename, (void**)&orig_rename);
+		MSHookFunction((void*)lstat, (void*)hook_lstat, (void**)&orig_lstat);
+		MSHookFunction((void*)stat, (void*)hook_stat, (void**)&orig_stat);
+	}
+
 	// 케이뱅크 crash when hook open on iOS 14 with Substrate... WTF?
 	// Use dobbyhook instead :)
 	// DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "open"), (DBICallTy)open_handler);
 	DobbyHook((void*)open, (void*)hook_open, (void**)&orig_open);
-	MSHookFunction((void*)rename, (void*)hook_rename, (void**)&orig_rename);
-	MSHookFunction((void*)lstat, (void*)hook_lstat, (void**)&orig_lstat);
-	MSHookFunction((void*)stat, (void*)hook_stat, (void**)&orig_stat);
 }
 
 void loadSysHooks2() {
 	%init(SysHooks2);
-	MSHookFunction((void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname);
-	MSHookFunction((void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs);
-	MSHookFunction((void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf);
-	MSHookFunction((void*)unmount, (void*)hook_unmount, (void**)&orig_unmount);
-	MSHookFunction((void*)utimes, (void*)hook_utimes, (void**)&orig_utimes);
-	MSHookFunction(dlsym((void *)RTLD_DEFAULT, "syscall"),(void*)hook_syscall,(void**)&orig_syscall);
-	MSHookFunction((void*)fork, (void*)hook_fork, (void**)&orig_fork);
-	MSHookFunction((void*)fopen, (void*)hook_fopen, (void**)&orig_fopen);
-	MSHookFunction((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name);
+
+	if (access("/usr/lib/libhooker.dylib", F_OK) == 0) {
+		const struct LHFunctionHook hooks[9] = {
+			{(void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname},
+			{(void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs},
+			{(void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf},
+			{(void*)unmount, (void*)hook_unmount, (void**)&orig_unmount},
+			{(void*)utimes, (void*)hook_utimes, (void**)&orig_utimes},
+			{dlsym((void *)RTLD_DEFAULT, "syscall"),(void*)hook_syscall,(void**)&orig_syscall},
+			{(void*)fork, (void*)hook_fork, (void**)&orig_fork},
+			{(void*)fopen, (void*)hook_fopen, (void**)&orig_fopen},
+			{(void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name}
+		};
+		LHHookFunctions(hooks, 9);
+	}
+	else {
+		MSHookFunction((void*)sysctlbyname, (void*)hook_sysctlbyname, (void**)&orig_sysctlbyname);
+		MSHookFunction((void*)statvfs, (void*)hook_statvfs, (void**)&orig_statvfs);
+		MSHookFunction((void*)pathconf, (void*)hook_pathconf, (void**)&orig_pathconf);
+		MSHookFunction((void*)unmount, (void*)hook_unmount, (void**)&orig_unmount);
+		MSHookFunction((void*)utimes, (void*)hook_utimes, (void**)&orig_utimes);
+		MSHookFunction(dlsym((void *)RTLD_DEFAULT, "syscall"),(void*)hook_syscall,(void**)&orig_syscall);
+		MSHookFunction((void*)fork, (void*)hook_fork, (void**)&orig_fork);
+		MSHookFunction((void*)fopen, (void*)hook_fopen, (void**)&orig_fopen);
+		MSHookFunction((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name, (void **)&orig__dyld_get_image_name);
+	}
 }
 
 void loadSysHooks3() {
