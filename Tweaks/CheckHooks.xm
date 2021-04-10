@@ -17,7 +17,7 @@
 		return %orig;
 
 	const char* bypasscode = [%c(StockNewsdmManager) defRandomString];
-	NSLog(@"[FlyJB] defRandomString = %s", bypasscode);
+	// NSLog(@"[FlyJB] defRandomString = %s", bypasscode);
 	if(!bypasscode || strcmp("00000000", bypasscode) != 0) {
 		showAlertBypassFailedToss();
 	}

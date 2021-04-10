@@ -180,6 +180,37 @@ static int smpayCount = 0;
 %end
 %end
 
+%group KakaoTaxi
+%hook UIImage
++ (UIImage *)imageNamed:(NSString *)name inBundle:(NSBundle *)bundle compatibleWithTraitCollection:(id)arg3 {
+	UIImage* ret = %orig(name, bundle, arg3);
+	if(ret == nil) {
+		ret = %orig(name, nil, arg3);
+		if(ret != nil)
+			return ret;
+		NSString *assetsPath = [[bundle bundlePath] stringByAppendingString:@"/Assets.car"];
+		CUICatalog *catalog = [[objc_getClass("CUICatalog") alloc] initWithURL:[NSURL fileURLWithPath:assetsPath] error:nil];
+		for (NSString *imgName in [catalog allImageNames]){
+			if([name isEqualToString:imgName]) {
+				NSArray *allImagesForCurrentImage = [catalog imagesWithName:name];
+				for (CUINamedImage * namedImage in allImagesForCurrentImage){
+					if ([namedImage isKindOfClass:objc_getClass("CUINamedImage")]){
+						CGImageRef cgImage = [namedImage image];
+						UIImage *img = [[[UIImage alloc] initWithCGImage:cgImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+						NSData *img2 = [NSData dataWithData:UIImagePNGRepresentation(img)];
+						UIImage *img3 = [UIImage imageWithData:img2];
+						return img3;
+					}
+				}
+				break;
+			}
+		}
+	}
+	return ret;
+}
+%end
+%end
+
 void loadObjCHooks() {
 	%init(ObjCHooks);
 }
@@ -194,4 +225,8 @@ void loadYogiyoObjcHooks() {
 
 void loadSmilePayObjcHooks() {
 	%init(SmilePay);
+}
+
+void loadKakaoTaxiObjcHooks() {
+	%init(KakaoTaxi);
 }

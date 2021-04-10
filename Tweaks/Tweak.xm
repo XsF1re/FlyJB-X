@@ -1,6 +1,7 @@
 #import <substrate.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "../Headers/Tweak.h"
 #import "../Headers/FJPattern.h"
 #import "../Headers/LibraryHooks.h"
 #import "../Headers/ObjCHooks.h"
@@ -15,13 +16,6 @@
 #import <AppSupport/CPDistributedMessagingCenter.h>
 #import <spawn.h>
 #include <dlfcn.h>
-
-@interface SBHomeScreenViewController : UIViewController
-@end
-
-@interface NSDistributedNotificationCenter : NSNotificationCenter
-@end
-
 
 %group NoFile
 %hook SpringBoard
@@ -308,6 +302,9 @@
 		if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
 			loadYogiyoObjcHooks();
 
+// Fix crashing KakaoTaxi on libhooker!
+		if([bundleID isEqualToString:@"com.kakao.taxi"])
+			loadKakaoTaxiObjcHooks();
 
 //XignCode - 좀비고
 		if([bundleID isEqualToString:@"net.kernys.aooni"])
