@@ -392,7 +392,10 @@ static const char* hook__dyld_get_image_name(uint32_t image_index) {
 				[lower rangeOfString:@"abypass"].location != NSNotFound ||
 				[lower rangeOfString:@"hidejb"].location != NSNotFound) {
 			//NSLog(@"[FlyJB] Bypassed SysHooks2 _dyld_get_image_name : %s", ret);
-			return "/dyld.bypass";
+			NSString *imgIndex = [NSString stringWithFormat:@"%d", image_index];
+			NSString *str = [NSString stringWithUTF8String:"/dyld.bypass"];
+			str = [str stringByAppendingString:imgIndex];
+			return [str cStringUsingEncoding:NSUTF8StringEncoding];
 		}
 	}
 	//NSLog(@"[FlyJB] Detected SysHooks2 _dyld_get_image_name : %s", ret);
