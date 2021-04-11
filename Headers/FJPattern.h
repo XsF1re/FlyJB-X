@@ -9,4 +9,6 @@
 - (BOOL)isPathRestrictedForSymlink: (NSString *)path;
 - (BOOL)isURLRestricted: (NSURL *)url;
 - (BOOL)isSandBoxPathRestricted: (NSString*)path;
+- (BOOL)isDyldRestricted: (NSString*)path;
+- (BOOL)isDlsymRestricted: (NSString*)path;
 @end

@@ -359,38 +359,7 @@ static const char* hook__dyld_get_image_name(uint32_t image_index) {
 	if(ret) {
 		NSString *detection = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:ret length:strlen(ret)];
 		NSString *lower = [detection lowercaseString];
-		if ([lower rangeOfString:@"substrate"].location != NSNotFound ||
-		    [lower rangeOfString:@"substitute"].location != NSNotFound ||
-		    [lower rangeOfString:@"substitrate"].location != NSNotFound ||
-		    [lower rangeOfString:@"cephei"].location != NSNotFound ||
-		    [lower rangeOfString:@"rocketbootstrap"].location != NSNotFound ||
-		    [lower rangeOfString:@"tweakinject"].location != NSNotFound ||
-		    [lower rangeOfString:@"jailbreak"].location != NSNotFound ||
-		    [lower rangeOfString:@"cycript"].location != NSNotFound ||
-		    [lower rangeOfString:@"pspawn"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcolorpicker"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcs"].location != NSNotFound ||
-		    [lower rangeOfString:@"bfdecrypt"].location != NSNotFound ||
-		    [lower rangeOfString:@"sbinject"].location != NSNotFound ||
-		    [lower rangeOfString:@"dobby"].location != NSNotFound ||
-		    [lower rangeOfString:@"libhooker"].location != NSNotFound ||
-		    [lower rangeOfString:@"snowboard"].location != NSNotFound ||
-		    [lower rangeOfString:@"libblackjack"].location != NSNotFound ||
-		    [lower rangeOfString:@"libobjc-trampolines"].location != NSNotFound ||
-		    [lower rangeOfString:@"cephei"].location != NSNotFound ||
-		    [lower rangeOfString:@"libmryipc"].location != NSNotFound ||
-		    [lower rangeOfString:@"libactivator"].location != NSNotFound ||
-		    [lower rangeOfString:@"alderis"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcloaky"].location != NSNotFound ||
-				[lower rangeOfString:@"flyjb"].location != NSNotFound ||
-				[lower rangeOfString:@"shadow"].location != NSNotFound ||
-				[lower rangeOfString:@"liberty"].location != NSNotFound ||
-				[lower rangeOfString:@"checkra1n"].location != NSNotFound ||
-				[lower rangeOfString:@"frida"].location != NSNotFound ||
-				[lower rangeOfString:@"sslkillswitch2"].location != NSNotFound ||
-				[lower rangeOfString:@"applist"].location != NSNotFound ||
-				[lower rangeOfString:@"abypass"].location != NSNotFound ||
-				[lower rangeOfString:@"hidejb"].location != NSNotFound) {
+		if ([[FJPattern sharedInstance] isDyldRestricted:lower]) {
 			//NSLog(@"[FlyJB] Bypassed SysHooks2 _dyld_get_image_name : %s", ret);
 			NSString *imgIndex = [NSString stringWithFormat:@"%d", image_index];
 			NSString *str = [NSString stringWithUTF8String:"/dyld.bypass"];
@@ -436,38 +405,7 @@ void syncDyldArray() {
 			continue;
 		}
 		NSString *lower = [name lowercaseString];
-		if ([lower rangeOfString:@"substrate"].location != NSNotFound ||
-		    [lower rangeOfString:@"substitute"].location != NSNotFound ||
-		    [lower rangeOfString:@"substitrate"].location != NSNotFound ||
-		    [lower rangeOfString:@"cephei"].location != NSNotFound ||
-		    [lower rangeOfString:@"rocketbootstrap"].location != NSNotFound ||
-		    [lower rangeOfString:@"tweakinject"].location != NSNotFound ||
-		    [lower rangeOfString:@"jailbreak"].location != NSNotFound ||
-		    [lower rangeOfString:@"cycript"].location != NSNotFound ||
-		    [lower rangeOfString:@"pspawn"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcolorpicker"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcs"].location != NSNotFound ||
-		    [lower rangeOfString:@"bfdecrypt"].location != NSNotFound ||
-		    [lower rangeOfString:@"sbinject"].location != NSNotFound ||
-		    [lower rangeOfString:@"dobby"].location != NSNotFound ||
-		    [lower rangeOfString:@"libhooker"].location != NSNotFound ||
-		    [lower rangeOfString:@"snowboard"].location != NSNotFound ||
-		    [lower rangeOfString:@"libblackjack"].location != NSNotFound ||
-		    [lower rangeOfString:@"libobjc-trampolines"].location != NSNotFound ||
-		    [lower rangeOfString:@"cephei"].location != NSNotFound ||
-		    [lower rangeOfString:@"libmryipc"].location != NSNotFound ||
-		    [lower rangeOfString:@"libactivator"].location != NSNotFound ||
-		    [lower rangeOfString:@"alderis"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcloaky"].location != NSNotFound ||
-				[lower rangeOfString:@"flyjb"].location != NSNotFound ||
-				[lower rangeOfString:@"shadow"].location != NSNotFound ||
-				[lower rangeOfString:@"liberty"].location != NSNotFound ||
-				[lower rangeOfString:@"checkra1n"].location != NSNotFound ||
-				[lower rangeOfString:@"frida"].location != NSNotFound ||
-				[lower rangeOfString:@"sslkillswitch2"].location != NSNotFound ||
-				[lower rangeOfString:@"applist"].location != NSNotFound ||
-				[lower rangeOfString:@"abypass"].location != NSNotFound ||
-				[lower rangeOfString:@"hidejb"].location != NSNotFound) {
+		if ([[FJPattern sharedInstance] isDyldRestricted:lower]) {
 			//NSLog(@"[FlyJB] BYPASSED dyld = %@", name);
 			continue;
 		}
@@ -479,95 +417,42 @@ void syncDyldArray() {
 }
 
 %group DyldHooks
-static char* (*orig_strstr)(const char* s1, const char* s2);
-static char* hook_strstr(const char* s1, const char* s2) {
-  if(strcmp(s2, "/Library/MobileSubstrate/") == 0
-      || strcmp(s2, "/Flex.dylib") == 0
-      || strcmp(s2, "/introspy.dylib") == 0
-      || strcmp(s2, "/MobileSubstrate.dylib") == 0
-      || strcmp(s2, "/CydiaSubstrate.framework") == 0
-      || strcmp(s2, "/.file") == 0
-      || strcmp(s2, "!@#") == 0
-      || strcmp(s2, "frida")== 0
-      || strcmp(s2, "Frida") == 0
-      || strcmp(s2, "ubstrate") == 0) {
-				NSLog(@"[FlyJB] strstr s1: %s", s1);
-      return NULL;
-		}
-  return orig_strstr(s1, s2);
+// static char* (*orig_strstr)(const char* s1, const char* s2);
+// static char* hook_strstr(const char* s1, const char* s2) {
+//   if(strcmp(s2, "/Library/MobileSubstrate/") == 0
+//       || strcmp(s2, "/Flex.dylib") == 0
+//       || strcmp(s2, "/introspy.dylib") == 0
+//       || strcmp(s2, "/MobileSubstrate.dylib") == 0
+//       || strcmp(s2, "/CydiaSubstrate.framework") == 0
+//       || strcmp(s2, "/.file") == 0
+//       || strcmp(s2, "!@#") == 0
+//       || strcmp(s2, "frida")== 0
+//       || strcmp(s2, "Frida") == 0
+//       || strcmp(s2, "ubstrate") == 0) {
+// 				NSLog(@"[FlyJB] strstr s1: %s", s1);
+//       return NULL;
+// 		}
+//   return orig_strstr(s1, s2);
+// }
+
+static uint32_t (*orig__dyld_image_count)(void);
+static uint32_t hook__dyld_image_count(void) {
+	return dyldCount;
 }
 
-// static uint32_t (*orig__dyld_image_count)(void);
-// static uint32_t hook__dyld_image_count(void) {
-// 	return dyldCount;
-// }
-//
-// static const char* (*orig__dyld_get_image_name2)(uint32_t image_index);
-// static const char* hook__dyld_get_image_name2(uint32_t image_index) {
-// 	return dyldNames[image_index];
-// }
-//
-// static struct mach_header* (*orig__dyld_get_image_header)(uint32_t image_index);
-// static struct mach_header* hook__dyld_get_image_header(uint32_t image_index) {
-// 	return dyldHeaders[image_index];
-// }
+static const char* (*orig__dyld_get_image_name2)(uint32_t image_index);
+static const char* hook__dyld_get_image_name2(uint32_t image_index) {
+	return dyldNames[image_index];
+}
+
+static struct mach_header* (*orig__dyld_get_image_header)(uint32_t image_index);
+static struct mach_header* hook__dyld_get_image_header(uint32_t image_index) {
+	return dyldHeaders[image_index];
+}
 
 %end
 
 %group loadSysHooksForLiApp
-
-// static int (*orig_connect)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
-// static int hook_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
-//
-// 	NSString *appPath = [[[[NSBundle mainBundle] bundleURL] absoluteString] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
-// 	const char *LiAppPath = [[appPath stringByAppendingString:@"LIAPP.ini"] cStringUsingEncoding:NSUTF8StringEncoding];
-//
-// 	FILE *LiApp = fopen(LiAppPath, "r");
-//
-// 	if(LiApp) {
-// 		//NSLog(@"[FlyJB] Found LIAPP.ini");
-// 		struct sockaddr_in *myaddr = (struct sockaddr_in *)serv_addr;
-// 		char LiAppString[32];
-// 		BOOL FoundServerIP = false;
-// 		while (!feof(LiApp)) {
-// 			fgets(LiAppString, 32, LiApp);
-// 			if(strstr(LiAppString, "serverip=") != NULL)  {
-// 				//NSLog(@"[FlyJB] LiAppString = %s", LiAppString);
-// 				FoundServerIP = true;
-// 				break;
-// 			}
-// 		}
-// 		fclose(LiApp);
-// 		if(!FoundServerIP) {
-// 			if(myaddr->sin_port == 2876) {
-// 				errno = ETIMEDOUT;
-// 				return -1;
-// 			}
-// 			return orig_connect(sockfd, serv_addr, addrlen);
-// 		}
-//
-// 		NSString *LiAppIP = [[NSString stringWithUTF8String:LiAppString] stringByReplacingOccurrencesOfString:@"serverip=" withString:@""];
-// 		LiAppIP = [LiAppIP stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-// 		const char *LiAppIP2 = [LiAppIP cStringUsingEncoding:NSUTF8StringEncoding];
-//
-// 		struct hostent *host_entry = gethostbyname(LiAppIP2);
-// 		int ndx = 0;
-// 		if (host_entry) {
-// 			for (ndx = 0; NULL != host_entry->h_addr_list[ndx]; ndx++) {
-// 				//NSLog(@"[FlyJB] LiAppIP: %s, LiAppIP(hex): %x", inet_ntoa(*(struct in_addr*)host_entry->h_addr_list[ndx]), inet_addr(inet_ntoa(*(struct in_addr*)host_entry->h_addr_list[ndx])));
-//
-// 				if(myaddr->sin_addr.s_addr == inet_addr(inet_ntoa(*(struct in_addr*)host_entry->h_addr_list[ndx]))) {
-// 					//NSLog(@"[FlyJB] Blocked connect ip: %s, ip(hex): %x, port:%d", inet_ntoa(myaddr->sin_addr), myaddr->sin_addr.s_addr, myaddr->sin_port);
-// 					errno = ETIMEDOUT;
-// 					return -1;
-// 				}
-// 			}
-// 		}
-// 		NSLog(@"[FlyJB] Detected connect ip: %s, ip(hex): %x, port:%d", inet_ntoa(myaddr->sin_addr), myaddr->sin_addr.s_addr, myaddr->sin_port);
-// 	}
-// 	return orig_connect(sockfd, serv_addr, addrlen);
-// }
-
 static kern_return_t (*orig_task_info)(task_name_t target_task, task_flavor_t flavor, task_info_t task_info_out, mach_msg_type_number_t *task_info_outCnt);
 static kern_return_t hook_task_info(task_name_t target_task, task_flavor_t flavor, task_info_t task_info_out, mach_msg_type_number_t *task_info_outCnt) {
 	kern_return_t ret = orig_task_info(target_task, flavor, task_info_out, task_info_outCnt);
@@ -614,20 +499,7 @@ static DIR *hook_opendir(const char *pathname) {
 %hookf(void *, dlsym, void *handle, const char *symbol) {
 	if(symbol) {
 		NSString *sym = [NSString stringWithUTF8String:symbol];
-		if([sym isEqualToString:@"MSGetImageByName"]
-		   || [sym isEqualToString:@"MSHookMemory"]
-		   || [sym isEqualToString:@"MSFindSymbol"]
-		   || [sym isEqualToString:@"MSHookFunction"]
-		   || [sym isEqualToString:@"MSHookMessageEx"]
-		   || [sym isEqualToString:@"MSHookClassPair"]
-		   || [sym isEqualToString:@"_Z13flyjb_patternP8NSString"]
-		   || [sym isEqualToString:@"_Z9hms_falsev"]
-		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportcreateremote"]
-		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportexposelocal"]
-		   || [sym isEqualToString:@"rocketbootstrap_distributedmessagingcenter_apply"]
-		   || [sym isEqualToString:@"rocketbootstrap_look_up"]
-		   || [sym isEqualToString:@"rocketbootstrap_register"]
-		   || [sym isEqualToString:@"rocketbootstrap_unlock"]) {
+		if([[FJPattern sharedInstance] isDlsymRestricted:sym]) {
 			// NSLog(@"[FlyJB] Bypassed dlsym handle:%p, symbol: %s", handle, symbol);
 			return NULL;
 		}
@@ -711,18 +583,20 @@ void loadDyldHooks() {
 	syncDyldArray();
 	%init(DyldHooks);
 
-	if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
-		const struct LHFunctionHook hooks[1] = {
-			{dlsym(RTLD_DEFAULT, "strstr"), (void*)hook_strstr, (void**)&orig_strstr}
-		};
-		LHHookFunctions(hooks, 1);
-	}
-	else {
-		MSHookFunction((void *)dlsym(RTLD_DEFAULT, "strstr"), (void *)hook_strstr, (void **)&orig_strstr);
-	}
+	// if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
+	// 	const struct LHFunctionHook hooks[1] = {
+	// 		{dlsym(RTLD_DEFAULT, "strstr"), (void*)hook_strstr, (void**)&orig_strstr}
+	// 	};
+	// 	LHHookFunctions(hooks, 1);
+	// }
+	// else {
+	// 	MSHookFunction((void *)dlsym(RTLD_DEFAULT, "strstr"), (void *)hook_strstr, (void **)&orig_strstr);
+	// }
 
 	// libhooker and fishhook crashed on odysseyra1n: _dyld_get_image_name, ... just use strstr hooking this time.
-	// DobbyHook((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name2, (void **)&orig__dyld_get_image_name2);
+	DobbyHook((void *)_dyld_get_image_name, (void *)hook__dyld_get_image_name2, (void **)&orig__dyld_get_image_name2);
+	DobbyHook((void *)_dyld_image_count, (void *)hook__dyld_image_count, (void **)&orig__dyld_image_count);
+	DobbyHook((void *)_dyld_get_image_header, (void *)hook__dyld_get_image_header, (void **)&orig__dyld_get_image_header);
 
 	// if (SVC_Access("/usr/lib/libhooker.dylib") == 0) {
 	// 	const struct LHFunctionHook hooks[2] = {

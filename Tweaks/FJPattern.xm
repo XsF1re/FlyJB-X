@@ -525,6 +525,7 @@
                              @"/var/log/jailbreakd-stderr.log",
                              @"/var/tmp/slide.txt",
                              @"/Library/PreferenceBundles/HideJBSettings.bundle",
+                             @"/Library/MobileSubstrate/DynamicLibraries/ FlyJB.plist",
                              nil
                             ];
 }
@@ -569,6 +570,66 @@
 		if ([path isEqualToString:jbFile]) {
 			return YES;
 		}
+	}
+	return NO;
+}
+
+-(BOOL) isDyldRestricted: (NSString*) path {
+  if ([path rangeOfString:@"substrate"].location != NSNotFound ||
+      [path rangeOfString:@"substitute"].location != NSNotFound ||
+      [path rangeOfString:@"substitrate"].location != NSNotFound ||
+      [path rangeOfString:@"cephei"].location != NSNotFound ||
+      [path rangeOfString:@"rocketbootstrap"].location != NSNotFound ||
+      [path rangeOfString:@"tweakinject"].location != NSNotFound ||
+      [path rangeOfString:@"jailbreak"].location != NSNotFound ||
+      [path rangeOfString:@"cycript"].location != NSNotFound ||
+      [path rangeOfString:@"pspawn"].location != NSNotFound ||
+      [path rangeOfString:@"libcolorpicker"].location != NSNotFound ||
+      [path rangeOfString:@"libcs"].location != NSNotFound ||
+      [path rangeOfString:@"bfdecrypt"].location != NSNotFound ||
+      [path rangeOfString:@"sbinject"].location != NSNotFound ||
+      [path rangeOfString:@"dobby"].location != NSNotFound ||
+      [path rangeOfString:@"libhooker"].location != NSNotFound ||
+      [path rangeOfString:@"snowboard"].location != NSNotFound ||
+      [path rangeOfString:@"libblackjack"].location != NSNotFound ||
+      [path rangeOfString:@"cephei"].location != NSNotFound ||
+      [path rangeOfString:@"libmryipc"].location != NSNotFound ||
+      [path rangeOfString:@"libactivator"].location != NSNotFound ||
+      [path rangeOfString:@"alderis"].location != NSNotFound ||
+      [path rangeOfString:@"libcloaky"].location != NSNotFound ||
+      [path rangeOfString:@"flyjb"].location != NSNotFound ||
+      [path rangeOfString:@"shadow"].location != NSNotFound ||
+      [path rangeOfString:@"liberty"].location != NSNotFound ||
+      [path rangeOfString:@"checkra1n"].location != NSNotFound ||
+      [path rangeOfString:@"frida"].location != NSNotFound ||
+      [path rangeOfString:@"sslkillswitch2"].location != NSNotFound ||
+      [path rangeOfString:@"applist"].location != NSNotFound ||
+      [path rangeOfString:@"abypass"].location != NSNotFound ||
+      [path rangeOfString:@"hidejb"].location != NSNotFound ||
+      [path rangeOfString:@"pspawn_payload"].location != NSNotFound) {
+		      return YES;
+	    }
+	return NO;
+}
+
+-(BOOL) isDlsymRestricted: (NSString*)symbol
+{
+	if([symbol isEqualToString:@"MSGetImageByName"]
+     || [symbol isEqualToString:@"MSHookMemory"]
+     || [symbol isEqualToString:@"MSFindSymbol"]
+     || [symbol isEqualToString:@"MSHookFunction"]
+     || [symbol isEqualToString:@"MSHookMessageEx"]
+     || [symbol isEqualToString:@"MSHookClassPair"]
+     || [symbol isEqualToString:@"_Z13flyjb_patternP8NSString"]
+     || [symbol isEqualToString:@"_Z9hms_falsev"]
+     || [symbol isEqualToString:@"rocketbootstrap_cfmessageportcreateremote"]
+     || [symbol isEqualToString:@"rocketbootstrap_cfmessageportexposelocal"]
+     || [symbol isEqualToString:@"rocketbootstrap_distributedmessagingcenter_apply"]
+     || [symbol isEqualToString:@"rocketbootstrap_look_up"]
+     || [symbol isEqualToString:@"rocketbootstrap_register"]
+     || [symbol isEqualToString:@"rocketbootstrap_unlock"])
+	{
+		return YES;
 	}
 	return NO;
 }
