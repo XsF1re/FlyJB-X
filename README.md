@@ -20,5 +20,18 @@ All arm64/e jailbroken devices on iOS 10~14
 2. change directory to this repository on Terminal.
 3. run command "./bin/distro.sh"
 
+## Getting Started
+### Installation
+1. Add repository - https://repo.xsf1re.kr
+2. Download and install FlyJB X from package manager.
+### Setting up FlyJB X
+1. Run FlyJB app on home screen.
+2. Enable and select app.
+3. PROFIT!!!
+
+## Uninstall
+- Just uninstall from package manager.
+
 ## License
 FlyJB X is licensed under the [GPLv3](LICENSE).
+
