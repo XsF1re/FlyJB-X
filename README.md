@@ -15,5 +15,10 @@ All arm64/e jailbroken devices on iOS 10~14
 - libhooker optimization by @ryannair05
 - Some code from SnapHide by @AeonLucid
 
+## How to build
+1. git clone this repository.
+2. change directory to this repository on Terminal.
+3. run command "./bin/distro.sh"
+
 ## License
 FlyJB X is licensed under the [GPLv3](LICENSE).
