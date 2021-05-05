@@ -2,7 +2,7 @@
 common jailbreak detection bypass
 
 ## Support Devices
-All arm64/e jailbroken devices on iOS 10 ~ 14
+All arm64/e jailbroken devices on iOS 10~14
 
 ## Credits
 - Overall development by @XsF1re
