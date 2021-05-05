@@ -13,6 +13,7 @@ All arm64/e jailbroken devices on iOS 10 ~ 14
 - Improve bypass performance by @BawAppie
 - Makefile improvment by @opa334dev
 - libhooker optimization by @ryannair05
+- Some code from SnapHide by @AeonLucid
 
 ## License
 FlyJB X is licensed under the [GPLv3](LICENSE).
